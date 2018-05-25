@@ -1,0 +1,22 @@
+{
+  "env": {
+    "commonjs": {
+      "presets": [
+        ["env"],
+        "stage-2"
+      ],
+      "plugins": [
+        "transform-decorators-legacy"
+      ]
+    },
+    "es": {
+      "presets": [
+        ["env", { "modules": false }],
+        "stage-2"
+      ],
+      "plugins": [
+        "transform-decorators-legacy"
+      ]
+    }
+  }
+}

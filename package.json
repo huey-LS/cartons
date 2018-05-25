@@ -1,0 +1,16 @@
+{
+  "name": "model",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setup": "lerna link && lerna bootstrap",
+    "build": "lerna run build",
+    "start": "lerna run start"
+  },
+  "author": "ignous",
+  "license": "ISC",
+  "devDependencies": {
+    "lerna": "^2.9.0"
+  }
+}

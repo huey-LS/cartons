@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+      "moduleResolution":"node",
+      "jsx": "react",
+      "module": "es6",
+      "target": "es5",
+      "allowJs": true,
+      "strictNullChecks": true,
+      "allowSyntheticDefaultImports": true,
+      "experimentalDecorators": true,
+  }
+}

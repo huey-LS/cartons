@@ -1,0 +1,15 @@
+.DS_Store
+.eslintrc
+.idea
+
+node_modules
+.vscode
+
+.nyc_output
+coverage.lcov
+coverage
+
+*.log
+dist
+lib
+es
