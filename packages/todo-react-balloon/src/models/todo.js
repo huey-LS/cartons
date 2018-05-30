@@ -1,6 +1,9 @@
 import Model from 'balloon/model';
+import { incrementCreator } from 'balloon/key-creators';
 
 export default class Todo extends Model {
+  static key = incrementCreator('todo-');
+
   get title () {
     return this.get('title');
   }

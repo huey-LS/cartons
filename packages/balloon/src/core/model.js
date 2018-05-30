@@ -1,14 +1,26 @@
 import Attributes from './attributes';
 import Event from './event';
 import { alias, immutable, eventEmitter } from '../utils/descriptors';
+import { incrementCreator } from '../utils/key-creators';
 
+const defaultKeyCreator = incrementCreator();
 export default class Model extends Event {
   constructor (attributes = {}) {
     super();
     this._immutable = this.constructor.immutable || false;
     let initialAttributes = this.constructor.initialAttributes;
     this._attributes = new Attributes(Object.assign({}, initialAttributes, attributes));
-    this._key = this.constructor.key || 'id';
+    var keyCreator = this.constructor.key || defaultKeyCreator;
+    if (typeof keyCreator === 'function') {
+      this.key = keyCreator();
+    } else if (keyCreator === 'string') {
+      // use attribute
+      Object.defineProperties(this, 'key', {
+        get: function () {
+          return this.get(keyCreator);
+        }
+      })
+    }
   }
 
   @alias('update')
@@ -24,10 +36,6 @@ export default class Model extends Event {
       this._attributes = this._attributes.merge(key);
     }
     return this;
-  }
-
-  get id () {
-    return this.get(this._idAttribute);
   }
 
   get (attributeName) {

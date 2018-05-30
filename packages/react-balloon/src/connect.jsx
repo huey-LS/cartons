@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export function connect (models, other) {
+export default function connect (models, other) {
   return function (Component) {
     return class BalloonConnectComponent extends React.Component {
       componentDidMount () {

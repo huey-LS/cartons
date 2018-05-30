@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import todoCollection, { actions } from '../store/todo-collection';
-import { connect } from './connect';
+import { connect } from 'react-balloon';
 
 const ENTER_KEY = 13;
 

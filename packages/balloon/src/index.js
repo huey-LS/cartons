@@ -4,3 +4,5 @@ export { default as Collection } from './core/collection';
 export { default as Container } from './core/container';
 import * as descriptors from './utils/descriptors';
 export { descriptors };
+import * as keyCreators from './utils/key-creators';
+export { keyCreators };

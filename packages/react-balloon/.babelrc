@@ -1,0 +1,14 @@
+{
+  "env": {
+    "commonjs": {
+      "presets": [
+        ["env"],
+        "stage-2"
+      ],
+      "plugins": [
+        "transform-react-jsx",
+        "transform-decorators-legacy"
+      ]
+    }
+  }
+}

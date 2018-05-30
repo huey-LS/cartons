@@ -1,9 +1,11 @@
 import { descriptors } from 'balloon';
 import Collection from 'balloon/collection';
+import { incrementCreator } from 'balloon/key-creators';
 import Todo from './todo';
 
 export default class TodoCollection extends Collection {
   static Model = Todo;
+  static key = incrementCreator('todo-collection-');
   static initialAttributes = {
     filterType: 'ALL'
   }
