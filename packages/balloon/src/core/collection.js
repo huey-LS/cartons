@@ -108,14 +108,14 @@ export default class Collection extends Model {
           this._items.push(
             newItem
           );
-          newItem.on('update', () => this.emit('update'))
+          // newItem.on('update', () => this.emit('update'))
         })
       } else {
         const newItem = this._createModal(item);
         this._items.push(
           newItem
         );
-        newItem.on('update', () => this.emit('update'))
+        // newItem.on('update', () => this.emit('update'))
       }
     }
 

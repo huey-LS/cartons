@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import todoCollection, { actions } from '../store/todo-collection';
-import { connect } from 'react-balloon';
+import { observer, action } from 'react-balloon';
 
 import {
   removeTodo,
@@ -12,23 +11,17 @@ import {
 import TodoItem from './todo-item';
 
 const ENTER_KEY = 13;
+const bindAction = action.bound((_this) => (_this.props.todos))
 
-@connect(
-  ({
-    todoCollection
-  }),
-  ({
-    removeTodo: actions.removeTodo,
-    editTodo: actions.editTodo,
-    modifyTodoCompleted: actions.modifyTodoCompleted,
-    toggleAllCompleted: actions.toggleAllCompleted
-  })
-)
+@observer()
 export default class Todos extends React.Component {
+  @bindAction removeTodo = removeTodo;
+  // @bindAction editTodo = actions.editTodo;
+  // @bindAction modifyTodoCompleted = actions.modifyTodoCompleted;
+  @bindAction toggleAllCompleted = toggleAllCompleted;
+
   render () {
-    const {
-      todoCollection
-    } = this.props;
+    const todos = this.props.todos;
 
     return (
       <section className="main">
@@ -37,7 +30,7 @@ export default class Todos extends React.Component {
           className="toggle-all"
           type="checkbox"
           onChange={this.toggleAll}
-          checked={todoCollection.isAllCompleted()}
+          checked={todos.isAllCompleted()}
         />
         <label
           htmlFor="toggle-all"
@@ -53,23 +46,22 @@ export default class Todos extends React.Component {
 
   renderTodos () {
     const {
-      todoCollection,
-      removeTodo,
-      editTodo,
-      modifyTodoCompleted
-    } = this.props;
-    return todoCollection.getFilterItems().map((todo, index) => (
+      removeTodo
+    } = this;
+    const todos = this.props.todos;
+
+    return todos.getFilterItems().map((todo, index) => (
       <TodoItem
-        key={index}
+        key={todo.key}
         todo={todo}
         remove={removeTodo}
-        edit={editTodo}
-        modifyCompleted={modifyTodoCompleted}
+        // edit={editTodo}
+        // modifyCompleted={modifyTodoCompleted}
       />
     ))
   }
 
   toggleAll = () => {
-    this.props.toggleAllCompleted();
+    this.toggleAllCompleted();
   }
 }

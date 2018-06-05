@@ -1,22 +1,22 @@
 import * as React from 'react';
 
-import todoCollection, { actions } from '../store/todo-collection';
-import { connect } from 'react-balloon';
+import { observer, action } from 'react-balloon';
+
+import {
+  addTodo
+} from '../actions';
+
 
 const ENTER_KEY = 13;
 
-@connect(
-  {
-    todoCollection
-  },
-  {
-    addTodo: actions.addTodo
-  }
-)
+
 export default class TodoInput extends React.Component {
   state = {
     newTodo: ''
   }
+
+  @action.bound((_this) => (_this.props.todos))
+  addTodo = addTodo;
 
   handleNewTodoKeyDown = (event) => {
     if (event.keyCode !== ENTER_KEY) {
@@ -28,7 +28,8 @@ export default class TodoInput extends React.Component {
     var val = this.state.newTodo.trim();
 
     if (val) {
-      if (this.props.addTodo) this.props.addTodo(val);
+      // if (this.props.addTodo) this.props.addTodo(val);
+      this.addTodo(val);
       this.setState({newTodo: ''});
     }
   }

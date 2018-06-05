@@ -18,6 +18,10 @@ export default class Event {
     let events = this._events[name];
     if (!events) events = this._events[name] = [];
     events.push(callback);
+    let removeListener = () => {
+      this.removeListener(name, callback);
+    }
+    return removeListener;
   }
 
   removeListener (name, callback) {

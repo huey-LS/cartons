@@ -2,10 +2,9 @@ export const addTodo = (todoCollection, title) => {
   return todoCollection.add({ title });
 }
 
-export const editTodo = (todoCollection, todo, newTitle) => {
-  return todoCollection.updateItem(
-    { title: newTitle },
-    (item) => (item === todo)
+export const editTodo = (todo, newTitle) => {
+  return todo.set(
+    { title: newTitle }
   );
 }
 
@@ -13,11 +12,8 @@ export const removeTodo = (todoCollection, todo) => {
   return todoCollection.remove(todo);
 }
 
-export const modifyTodoCompleted = (todoCollection, todo, completed) => {
-  return todoCollection.updateItem(
-    { completed: completed },
-    (item) => (todo === item)
-  );
+export const toggleComplete = (todo) => {
+  return todo.toggleComplete();
 }
 
 export const toggleAllCompleted = (todoCollection) => {

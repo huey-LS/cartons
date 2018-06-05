@@ -1,12 +1,23 @@
 import * as React from 'react';
+import { observer, action } from 'react-balloon';
+
+import {
+  editTodo,
+  toggleComplete
+} from '../actions';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
+const bindAction = action.bound((_this) => (_this.props.todo))
 
+@observer()
 export default class TodoItem extends React.Component {
   state = {
     editing: false
   }
+
+  @bindAction editTodo = editTodo;
+  @bindAction toggleComplete = toggleComplete;
 
   renderEditing () {
     return (
@@ -29,7 +40,7 @@ export default class TodoItem extends React.Component {
           className="toggle"
           type="checkbox"
           checked={todo.completed}
-          onChange={this.handleToggleCompleted}
+          onChange={this.toggleComplete}
         />
         <label onDoubleClick={this.handleToEdit}>
           {todo.title}
@@ -66,12 +77,11 @@ export default class TodoItem extends React.Component {
     remove(todo);
   }
 
-  handleToggleCompleted = () => {
-    if (typeof this.props.modifyCompleted === 'function') {
-      let todo = this.props.todo;
-      this.props.modifyCompleted(todo, !todo.completed);
-    }
-  }
+  // handleToggleCompleted = () => {
+  //   // let todo = this.props.todo;
+  //   // this.props.modifyCompleted(todo, !todo.completed);
+  //   this.modifyCompleted(!todo.completed);
+  // }
 
   handleToEdit = () => {
     this.setState({
@@ -100,8 +110,7 @@ export default class TodoItem extends React.Component {
 
   editComplete () {
     this.setState({ editing: false });
-    if (typeof this.props.edit === 'function') {
-      this.props.edit(this.props.todo, this.state.editText);
-    }
+    // this.props.edit(this.props.todo, this.state.editText);
+    this.editTodo(this.state.editText);
   }
 }

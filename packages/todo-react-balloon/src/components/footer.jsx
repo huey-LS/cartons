@@ -1,25 +1,30 @@
 import * as React from 'react';
 
-import todoCollection, { actions } from '../store/todo-collection';
-import { connect } from 'react-balloon';
+import { observer, action } from 'react-balloon';
 
-@connect(
-  {
-    todoCollection
-  },
-  {
-    goFilterTodos: actions.goFilterTodos,
-    clearAllCompleted: actions.clearAllCompleted
-  }
-)
+import {
+  clearAllCompleted,
+  goFilterTodos
+} from '../actions';
+
+const actionBindTodos = action.bound((_this) => _this.props.todos);
+
+@observer()
 export default class Footer extends React.Component {
+  @actionBindTodos
+  clearAllCompleted = clearAllCompleted;
+
+  @actionBindTodos
+  goFilterTodos = goFilterTodos;
+
   render () {
-    const { todoCollection, goFilterTodos, clearAllCompleted } = this.props;
-    const filterType = todoCollection.get('filterType');
+    const { goFilterTodos, clearAllCompleted } = this;
+    const { todos } = this.props;
+    const filterType = todos.get('filterType');
     return (
       <div className="footer">
         <div className="todo-count">
-          <strong>{todoCollection.length}</strong> items
+          <strong>{todos.length}</strong> items
         </div>
         <ul className="filters">
           <li>
