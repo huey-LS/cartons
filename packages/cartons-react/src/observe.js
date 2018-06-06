@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Model from 'balloon/model';
+import Model from 'cartons/model';
 
 export default function observe (target, key, descriptor) {
   let value = descriptor.value;

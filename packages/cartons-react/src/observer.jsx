@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Model from 'balloon/model'
+import Model from 'cartons/model'
 
 export default function observer () {
   return function (Component) {
-    return class BalloonObserverComponent extends React.Component {
+    return class CartonsObserverComponent extends React.Component {
       constructor (props) {
         super(props);
 

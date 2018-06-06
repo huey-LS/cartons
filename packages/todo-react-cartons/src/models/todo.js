@@ -1,7 +1,8 @@
-import Model from 'balloon/model';
+import Model from 'cartons/model';
+import { incrementCreator } from 'cartons/key-creators';
 
 export default class Todo extends Model {
-  static immutable = true;
+  static key = incrementCreator('todo-');
 
   get title () {
     return this.get('title');
