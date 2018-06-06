@@ -5,12 +5,17 @@
   "main": "index.js",
   "files": [
     "lib",
-    "index.js"
+    "index.js",
+    "collection.js",
+    "container.js",
+    "model.js",
+    "key-creators.js"
   ],
   "scripts": {
     "clean": "rm -fr lib",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build": "npm run clean && npm run build:commonjs"
+    "build": "npm run clean && npm run build:commonjs",
+    "prepare": "npm run build"
   },
   "author": "",
   "license": "MIT",

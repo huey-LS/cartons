@@ -10,7 +10,8 @@
   "scripts": {
     "clean": "rm -fr lib",
     "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build": "npm run clean && npm run build:commonjs"
+    "build": "npm run clean && npm run build:commonjs",
+    "prepare": "npm run build"
   },
   "author": "",
   "license": "MIT",
