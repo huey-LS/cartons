@@ -13,9 +13,9 @@ export default class Model extends Event {
     var keyCreator = this.constructor.key || defaultKeyCreator;
     if (typeof keyCreator === 'function') {
       this.key = keyCreator();
-    } else if (keyCreator === 'string') {
+    } else if (typeof keyCreator === 'string') {
       // use attribute
-      Object.defineProperties(this, 'key', {
+      Object.defineProperty(this, 'key', {
         get: function () {
           return this.get(keyCreator);
         }
