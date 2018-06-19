@@ -11,7 +11,7 @@ export default function observe (target, key, descriptor) {
     descriptor.initializer = function () {
       const _this = this;
       const oldValue = oldInitializer.call(_this);
-      if (oldValue instanceof Model) {
+      if (Model.isModel(oldValue)) {
         createObserveForComponent(oldValue, _this);
       }
       return oldValue;

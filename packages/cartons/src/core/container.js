@@ -2,6 +2,16 @@ import Model from './model';
 import { immutable, eventEmitter } from '../utils/descriptors';
 
 export default class Container extends Model {
+  static isContainer = function (obj) {
+    return obj &&
+      (
+        obj instanceof Container
+        || obj.__cartons_container
+      )
+  }
+
+  __cartons_container = true;
+
   constructor (attributes, content) {
     super(attributes);
     this._Model = this.constructor.Model;

@@ -9,6 +9,16 @@ import {
  * @description immutable attributes
  */
 export default class Attributes {
+  static isAttributes = function (obj) {
+    return obj &&
+      (
+        obj instanceof Attributes
+        || obj.__cartons_attributes
+      )
+  }
+
+  __cartons_attributes = true;
+
   constructor (data = {}) {
     this._attributes = data;
   }

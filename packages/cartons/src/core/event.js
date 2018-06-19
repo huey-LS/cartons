@@ -1,6 +1,16 @@
 import { alias } from '../utils/descriptors';
 
 export default class Event {
+  static isEvent = function (obj) {
+    return obj &&
+      (
+        obj instanceof Event
+        || obj.__cartons_event
+      )
+  }
+
+  __cartons_event = true;
+
   _events = {};
 
   @alias('trigger')

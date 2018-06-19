@@ -5,6 +5,16 @@ import { incrementCreator } from '../utils/key-creators';
 
 const defaultKeyCreator = incrementCreator();
 export default class Model extends Event {
+  static isModel = function (obj) {
+    return obj &&
+      (
+        obj instanceof Model
+        || obj.__cartons_model
+      )
+  }
+
+  __cartons_model = true;
+
   constructor (attributes = {}) {
     super();
     this._immutable = this.constructor.immutable || false;

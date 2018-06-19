@@ -37,7 +37,7 @@ export default function observer () {
 
       observe = (props) => {
         Object.keys(props).forEach((key) => {
-          if (props[key] instanceof Model) {
+          if (Model.isModel(props[key])) {
             this._listeners[key] = props[key].on('update', this.updateView);
           }
         })

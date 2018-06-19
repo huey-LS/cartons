@@ -11,6 +11,16 @@ const transformFromArrayMap = [
   (target) => target._items
 )
 export default class Collection extends Model {
+  static isCollection = function (obj) {
+    return obj &&
+      (
+        obj instanceof Collection
+        || obj.__cartons_collection
+      )
+  }
+
+  __cartons_collection = true;
+
   constructor (attributes) {
     super(attributes);
     this._Model = this.constructor.Model;
