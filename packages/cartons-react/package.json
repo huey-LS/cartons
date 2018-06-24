@@ -1,6 +1,6 @@
 {
   "name": "cartons-react",
-  "version": "0.1.1-beta.2",
+  "version": "0.1.1-beta.2-1",
   "description": "",
   "main": "index.js",
   "files": [
@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "react": "^16.3.2",
-    "cartons": "^0.1.0"
+    "cartons": "^0.1.1-beta.2"
   }
 }
