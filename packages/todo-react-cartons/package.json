@@ -29,7 +29,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "cartons": "0.1.1-beta.2",
-    "cartons-react": "0.1.1-beta.2-1"
+    "cartons": "0.1.1-beta.3",
+    "cartons-react": "0.1.1-beta.3"
   }
 }
