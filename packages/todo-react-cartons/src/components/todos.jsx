@@ -1,25 +1,20 @@
 import * as React from 'react';
 
-import { observer, action } from 'cartons-react';
+// import { bound } from 'cartons/actions';
+import { observer } from 'cartons-react';
 
-import {
-  removeTodo,
-  editTodo,
-  modifyTodoCompleted,
-  toggleAllCompleted
-} from '../actions';
+// import {
+//   removeTodo,
+//   editTodo,
+//   modifyTodoCompleted,
+//   toggleAllCompleted
+// } from '../actions';
 import TodoItem from './todo-item';
 
-const ENTER_KEY = 13;
-const bindAction = action.bound((_this) => (_this.props.todos))
+// const bindAction = bound((_this) => (_this.props.todos))
 
 @observer()
 export default class Todos extends React.Component {
-  @bindAction removeTodo = removeTodo;
-  // @bindAction editTodo = actions.editTodo;
-  // @bindAction modifyTodoCompleted = actions.modifyTodoCompleted;
-  @bindAction toggleAllCompleted = toggleAllCompleted;
-
   render () {
     const todos = this.props.todos;
 
@@ -45,16 +40,13 @@ export default class Todos extends React.Component {
   }
 
   renderTodos () {
-    const {
-      removeTodo
-    } = this;
     const todos = this.props.todos;
 
     return todos.getFilterItems().map((todo, index) => (
       <TodoItem
         key={todo.key}
         todo={todo}
-        remove={removeTodo}
+        remove={todos.actions.removeTodo}
         // edit={editTodo}
         // modifyCompleted={modifyTodoCompleted}
       />
@@ -62,6 +54,6 @@ export default class Todos extends React.Component {
   }
 
   toggleAll = () => {
-    this.toggleAllCompleted();
+    this.props.todos.actions.toggleAllCompleted();
   }
 }

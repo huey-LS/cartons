@@ -1,17 +1,7 @@
-export function formatByMap (map, defaultMessage) {
-  defaultMessage = defaultMessage || map['default'];
-  return function (target, name, descriptor) {
-    var oldGet = descriptor.get;
-    descriptor.get = function () {
-      let result = map[oldGet.call(this)];
-      if (!result && defaultMessage) {
-        result = defaultMessage;
-      }
-      return result;
-    }
-    return descriptor;
-  }
-}
+import {
+  clone,
+  createThunkAttributeDescriptor
+} from './helpers';
 
 export const mixinFunctionFromTransform = (
   map,
@@ -51,16 +41,9 @@ export function alias (aliasNames, ...args) {
   }
 }
 
-export function clone (obj) {
-  let newModel = Object.assign({}, obj);
-  newModel.__proto__ = obj.__proto__;
-  return newModel;
-}
-
-export function immutable (immutable) {
-  return function (target, key, descriptor) {
-    let oldValue = descriptor.value;
-    descriptor.value = function (...args) {
+export const immutable = createThunkAttributeDescriptor(function (value, immutable) {
+  if (typeof value === 'function') {
+    return function (...args) {
       let currentClone = this.clone || (() => clone(this));
       let currentImmutable = 'undefined' === typeof immutable ? this._immutable : immutable;
       let currentTarget;
@@ -69,22 +52,21 @@ export function immutable (immutable) {
       } else {
         currentTarget = this;
       }
-      return oldValue.apply(currentTarget, args);
+      return value.apply(currentTarget, args);
     }
-    return descriptor;
   }
-}
+  return value;
+})
 
-export function eventEmitter (eventName) {
-  return function (target, key, descriptor) {
-    let oldValue = descriptor.value;
-    descriptor.value = function (...args) {
-      let result = oldValue.apply(this, args);
+export const eventEmitter = createThunkAttributeDescriptor(function (value, eventName) {
+  if (typeof value === 'function') {
+    return function (...args) {
+      let result = value.apply(this, args);
       if (typeof this.emit === 'function') {
         this.emit(eventName)
       }
       return result;
     }
-    return descriptor;
   }
-}
+  return value;
+})

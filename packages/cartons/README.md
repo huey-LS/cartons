@@ -14,6 +14,7 @@ npm install --save cartons
   - [key-creators](#key-creators)
     - [randomCreator](#randomCreator)
     - [incrementCreator](#incrementCreator)
+  - [actions](#actions)
 - [Usage with react](https://github.com/ignous/cartons/tree/master/packages/cartons-react/README.md)
 
 ## API
@@ -118,3 +119,44 @@ var collection = new CustomCollection(
 #### `incrementCreator(prefix = '')` 以递增方式返回key
 
 
+### actions
+
+#### `bindAction(filter: Function|Object)))`
+##### usage
+```
+class A {
+  @bindAction((_self) => (_self.model)) action1 = action1;
+  model = new CustomModel();
+}
+
+var a = new A();
+a.action1(1);
+
+function action1 (param) {
+  // param === 1
+  return function (model) {
+    // model === a.model
+  }
+}
+```
+
+#### `bindActions(actions: Object.<Function>, options: { actionsAttributeName: string = 'action' })))`
+##### usage
+```
+class A {
+  @bindActions({ action1, action2, ... })
+  model = new CustomModel();
+}
+
+var a = new A();
+a.model.actions.action1(1);
+```
+
+#### `createActions()`
+##### usage
+```
+class A extend Model {
+  @createActions()
+  actions = { action1, action2, ...}
+}
+```

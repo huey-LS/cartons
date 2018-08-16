@@ -1,22 +1,14 @@
 import * as React from 'react';
 
-import { observer, action } from 'cartons-react';
-
-import {
-  addTodo
-} from '../actions';
-
-
 const ENTER_KEY = 13;
-
 
 export default class TodoInput extends React.Component {
   state = {
     newTodo: ''
   }
 
-  @action.bound((_this) => (_this.props.todos))
-  addTodo = addTodo;
+  // @bound((_this) => (_this.props.todos))
+  // addTodo = addTodo;
 
   handleNewTodoKeyDown = (event) => {
     if (event.keyCode !== ENTER_KEY) {
@@ -28,8 +20,7 @@ export default class TodoInput extends React.Component {
     var val = this.state.newTodo.trim();
 
     if (val) {
-      // if (this.props.addTodo) this.props.addTodo(val);
-      this.addTodo(val);
+      this.props.todos.actions.addTodo(val);
       this.setState({newTodo: ''});
     }
   }

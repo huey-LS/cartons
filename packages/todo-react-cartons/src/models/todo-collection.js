@@ -1,4 +1,3 @@
-import { descriptors } from 'cartons';
 import Collection from 'cartons/collection';
 import { incrementCreator } from 'cartons/key-creators';
 import Todo from './todo';

@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { observer, action } from 'cartons-react';
+// import { bindAction } from 'cartons/actions';
+import { observer } from 'cartons-react';
 
-import {
-  editTodo,
-  toggleComplete
-} from '../actions';
+// import {
+//   editTodo,
+//   toggleComplete
+// } from '../actions';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
-const bindAction = action.bound((_this) => (_this.props.todo))
+// const bound = bindAction((_this) => (_this.props.todo))
 
 @observer()
 export default class TodoItem extends React.Component {
@@ -16,8 +17,8 @@ export default class TodoItem extends React.Component {
     editing: false
   }
 
-  @bindAction editTodo = editTodo;
-  @bindAction toggleComplete = toggleComplete;
+  // @bound editTodo = editTodo;
+  // @bound toggleComplete = toggleComplete;
 
   renderEditing () {
     return (
@@ -40,7 +41,7 @@ export default class TodoItem extends React.Component {
           className="toggle"
           type="checkbox"
           checked={todo.completed}
-          onChange={this.toggleComplete}
+          onChange={todo.actions.toggleComplete}
         />
         <label onDoubleClick={this.handleToEdit}>
           {todo.title}
@@ -111,6 +112,6 @@ export default class TodoItem extends React.Component {
   editComplete () {
     this.setState({ editing: false });
     // this.props.edit(this.props.todo, this.state.editText);
-    this.editTodo(this.state.editText);
+    this.props.todo.actions.editTodo(this.state.editText);
   }
 }

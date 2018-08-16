@@ -12,7 +12,6 @@ npm install --save cartons-react
 - [API](#api)
   - [observer](#observer)
   - [observe](#observe)
-  - [action](#action)
 - [Create todo application](https://github.com/ignous/cartons/tree/master/packages/todo-react-cartons)
 
 
@@ -62,21 +61,6 @@ npm install --save cartons-react
     }
   }
 ```
-
-### action
-- `action.bound`
-  ```
-    import { action } from 'cartons-react';
-
-    var someAction = (model) => {
-      // model.set(...)
-    }
-
-    class Custom extends React.Component {
-      @action.bound((_this) => (_this.props.model))
-      someAction = someAction
-    }
-  ```
 
 <a id="demo"></a>
 

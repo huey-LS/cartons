@@ -1,24 +1,9 @@
 import * as React from 'react';
-
-import { observer, action } from 'cartons-react';
-
-import {
-  clearAllCompleted,
-  goFilterTodos
-} from '../actions';
-
-const actionBindTodos = action.bound((_this) => _this.props.todos);
+import { observer } from 'cartons-react';
 
 @observer()
 export default class Footer extends React.Component {
-  @actionBindTodos
-  clearAllCompleted = clearAllCompleted;
-
-  @actionBindTodos
-  goFilterTodos = goFilterTodos;
-
   render () {
-    const { goFilterTodos, clearAllCompleted } = this;
     const { todos } = this.props;
     const filterType = todos.get('filterType');
     return (
@@ -31,27 +16,27 @@ export default class Footer extends React.Component {
             <a
               href="javascript:"
               className={filterType === 'ALL' ? 'selected' : ''}
-              onClick={() => (goFilterTodos('ALL'))}
+              onClick={() => (todos.actions.goFilterTodos('ALL'))}
             >All</a>
           </li>
           <li>
             <a
               href="javascript:"
               className={filterType === 'ACTIVE' ? 'selected' : ''}
-              onClick={() => (goFilterTodos('ACTIVE'))}
+              onClick={() => (todos.actions.goFilterTodos('ACTIVE'))}
             >Active</a>
           </li>
           <li>
             <a
               href="javascript:"
               className={filterType === 'COMPLETED' ? 'selected' : ''}
-              onClick={() => (goFilterTodos('COMPLETED'))}
+              onClick={() => (todos.actions.goFilterTodos('COMPLETED'))}
             >Completed</a>
           </li>
         </ul>
         <button
           className="clear-completed"
-          onClick={clearAllCompleted}
+          onClick={todos.actions.clearAllCompleted}
         >
           Clear completed
         </button>

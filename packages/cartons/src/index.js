@@ -6,3 +6,5 @@ import * as descriptors from './utils/descriptors';
 export { descriptors };
 import * as keyCreators from './utils/key-creators';
 export { keyCreators };
+import * as actions from './utils/actions';
+export { actions };

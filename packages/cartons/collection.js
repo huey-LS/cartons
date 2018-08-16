@@ -1,1 +1,1 @@
-module.exports = require('./lib/collection');
+module.exports = require('./lib/core/collection');
