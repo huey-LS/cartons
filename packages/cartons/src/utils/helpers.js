@@ -4,9 +4,34 @@ export function clone (obj) {
   return newModel;
 }
 
+export function createInitializerDescriptor () {
+  let descriptor = {
+    enumerable: true,
+    get: function () {
+      return descriptor.value;
+    },
+    set: function (value) {
+      if (this.initialized) {
+        descriptor.value = value;
+      } else {
+        descriptor.value = descriptor.initializer(() => (value));
+        descriptor.initialized = true;
+      }
+    },
+    initialized: false,
+    initializer: function () {}
+  };
+
+  return descriptor;
+}
+
 export function createThunkAttributeDescriptor (callback) {
   return function (options) {
     return function (target, key, descriptor) {
+      if (!descriptor) {
+        descriptor = createInitializerDescriptor(target, key);
+      }
+
       if (descriptor.initializer) {
         const oldInitializer = descriptor.initializer;
         descriptor.initializer = function () {
@@ -20,6 +45,37 @@ export function createThunkAttributeDescriptor (callback) {
       return descriptor;
     }
   }
+}
+
+export function createInitializerDescriptor (target, key, descriptor) {
+  if (!descriptor) {
+    const initializerKey = `__initializer_${key}`;
+    descriptor = {
+      enumerable: true,
+      get: function () {
+        let initializer = this[initializerKey];
+        return initializer && initializer.value;
+      },
+      set: function (value) {
+        if (!this[initializerKey]) this[initializerKey] = {};
+        let initializer = this[initializerKey];
+        if (initializer.initialized) {
+          initializer.value = value;
+        } else {
+          initializer.originValue = value;
+          initializer.value = descriptor.initializer.call(this);
+          initializer.initialized = true;
+          this[initializerKey] = initializer;
+        }
+      },
+      initializer: function () {
+        let initializer = this[initializerKey];
+        return initializer && initializer.originValue;
+      }
+    };
+  }
+
+  return descriptor;
 }
 
 export function isModel (obj) {
