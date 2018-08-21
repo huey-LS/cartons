@@ -63,41 +63,6 @@ export default class Collection extends Model {
     return this;
   }
 
-  getItem (...args) {
-    let i = this.getItemWithIndex(...args)
-    if (i) return i.item;
-  }
-
-  getItemIndex (...args) {
-    let i = this.getItemWithIndex(...args)
-    if (i) {
-      return i.index;
-    } else {
-      return -1;
-    }
-  }
-
-  getItemWithIndex (item, filter) {
-    if ('function' !== typeof filter) {
-      let key = this._Model.key;
-      if (key && item[key]) {
-        filter = (i) => (i === item || i.get(key) === item[key])
-      } else {
-        filter = (i) => (i === item)
-      }
-    }
-    if (filter) {
-      let targetIndex = this.findIndex(filter);
-      if (targetIndex >= 0) {
-        return {
-          item: this._items[targetIndex],
-          index: targetIndex
-        }
-      }
-    }
-
-  }
-
   @eventEmitter('update')
   @immutable()
   clean () {
@@ -133,7 +98,7 @@ export default class Collection extends Model {
   }
 
   _remove (item) {
-    let currentItemIndex = this.getItemIndex(item);
+    let currentItemIndex = this.findIndex((i) => i === item);
     if (currentItemIndex > -1) {
       this._items = [
         ...this._items.slice(0, currentItemIndex),
