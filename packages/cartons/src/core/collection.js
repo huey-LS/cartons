@@ -31,6 +31,14 @@ export default class Collection extends Model {
     return {...this._attributes, items: this._items.map(item => item.toJSON())};
   }
 
+  toArray () {
+    return this._items.map(item => item.toJSON());
+  }
+
+  get items () {
+    return this._items;
+  }
+
   get length () {
     return this._items.length;
   }

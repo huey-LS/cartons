@@ -4,27 +4,6 @@ export function clone (obj) {
   return newModel;
 }
 
-export function createInitializerDescriptor () {
-  let descriptor = {
-    enumerable: true,
-    get: function () {
-      return descriptor.value;
-    },
-    set: function (value) {
-      if (this.initialized) {
-        descriptor.value = value;
-      } else {
-        descriptor.value = descriptor.initializer(() => (value));
-        descriptor.initialized = true;
-      }
-    },
-    initialized: false,
-    initializer: function () {}
-  };
-
-  return descriptor;
-}
-
 export function createThunkAttributeDescriptor (callback) {
   return function (options) {
     return function (target, key, descriptor) {

@@ -10,7 +10,7 @@ export const mixinFunctionFromTransform = (
   if (Array.isArray(map) && 'function' === typeof transform) {
     map.forEach((key) => {
       if('function' === typeof Array.prototype[key]) {
-        Object.defineProperty(Object.prototype, key, {
+        Object.defineProperty(target.prototype, key, {
           value: function (...args) {
             let currentTarget = transform(this);
             return currentTarget && currentTarget[key] && currentTarget[key](...args)
