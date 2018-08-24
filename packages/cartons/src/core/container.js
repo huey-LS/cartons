@@ -1,5 +1,6 @@
 import Model from './model';
-import { immutable, eventEmitter } from '../utils/descriptors';
+import { emitter } from './event';
+import { immutable } from '../utils/descriptors';
 
 export default class Container extends Model {
   static isContainer = function (obj) {
@@ -30,7 +31,7 @@ export default class Container extends Model {
     return { ...this._attributes, content: this._content.toJSON() };
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   updateContent (content) {
     return this._updateContent(content);

@@ -1,5 +1,6 @@
 import Model from './model';
-import { mixinFunctionFromTransform, immutable, eventEmitter } from '../utils/descriptors';
+import { emitter } from './event';
+import { mixinFunctionFromTransform, immutable } from '../utils/descriptors';
 
 const transformFromArrayMap = [
   'forEach', 'map', 'reduce', 'reduceRight',
@@ -45,25 +46,25 @@ export default class Collection extends Model {
 
   set length (value) {}
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   add (item) {
     return this._add(item);
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   remove (item) {
     return this._remove(item);
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   updateItem (item, filter) {
     return this._updateItem(item, filter);
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   updateItems (fn) {
     // return this._updateItem(item, filter);
@@ -71,13 +72,13 @@ export default class Collection extends Model {
     return this;
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   clean () {
     return this._clean();
   }
 
-  @eventEmitter('update')
+  @emitter('update')
   @immutable()
   reset(items) {
     return this._reset(items);

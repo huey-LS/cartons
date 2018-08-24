@@ -1,4 +1,5 @@
 import { alias } from '../utils/descriptors';
+import { createMixer, createThunkAttributeDescriptor } from '../utils/helpers';
 
 export default class Event {
   static isEvent = function (obj) {
@@ -45,3 +46,18 @@ export default class Event {
     }
   }
 }
+
+export const mixEvent = createMixer(Event);
+
+export const emitter = createThunkAttributeDescriptor(function (value, eventName) {
+  if (typeof value === 'function') {
+    return function (...args) {
+      let result = value.apply(this, args);
+      if (typeof this.emit === 'function') {
+        this.emit(eventName)
+      }
+      return result;
+    }
+  }
+  return value;
+})

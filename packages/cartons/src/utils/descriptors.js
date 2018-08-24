@@ -57,16 +57,3 @@ export const immutable = createThunkAttributeDescriptor(function (value, immutab
   }
   return value;
 })
-
-export const eventEmitter = createThunkAttributeDescriptor(function (value, eventName) {
-  if (typeof value === 'function') {
-    return function (...args) {
-      let result = value.apply(this, args);
-      if (typeof this.emit === 'function') {
-        this.emit(eventName)
-      }
-      return result;
-    }
-  }
-  return value;
-})

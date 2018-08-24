@@ -57,6 +57,31 @@ export function createInitializerDescriptor (target, key, descriptor) {
   return descriptor;
 }
 
+export function createMixer (TargetClass) {
+  return (SuperClass) => {
+    const MixinClass = class extends SuperClass {
+      constructor (...args) {
+        super(...args);
+      }
+    }
+
+    MixinClass.prototype = Object.create(MixinClass.prototype, Object.getOwnPropertyDescriptors(TargetClass.prototype))
+    return MixinClass;
+  }
+}
+
+export function mixin (SuperClass) {
+  return (MixinSuperClass, ...args) => {
+    if (MixinSuperClass) {
+      return mixin(
+        createMixer(MixinSuperClass)(SuperClass)
+      )(...args)
+    } else {
+      return SuperClass;
+    }
+  }
+}
+
 export function isModel (obj) {
   return obj &&
     (
