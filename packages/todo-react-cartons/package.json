@@ -30,6 +30,6 @@
   },
   "dependencies": {
     "cartons": "0.1.1-beta.3",
-    "cartons-react": "0.1.1-beta.3"
+    "cartons-react": "0.1.1-beta.4"
   }
 }
