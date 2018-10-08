@@ -31,6 +31,7 @@ export default class Container extends Model {
     return { ...this._attributes, content: this._content.toJSON() };
   }
 
+  @emitter('update')
   @immutable()
   updateContent (content) {
     return this._updateContent(content);
