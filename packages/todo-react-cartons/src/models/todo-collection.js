@@ -9,6 +9,14 @@ export default class TodoCollection extends Collection {
     filterType: 'ALL'
   }
 
+  collectionDidAddChild (item) {
+    console.log('collection add child', item);
+  }
+
+  collectionDidRemoveChild (item) {
+    console.log('collection remove child', item)
+  }
+
   isAllCompleted () {
     return this.every((todo) => (todo.isCompleted()))
   }

@@ -1,5 +1,6 @@
 import Model from './model';
 import { emitter } from './event';
+import { respond } from './spread';
 import { mixinFunctionFromTransform, immutable } from '../utils/descriptors';
 
 const transformFromArrayMap = [
@@ -27,6 +28,18 @@ export default class Collection extends Model {
     this._Model = this.constructor.Model;
     this._items = [];
   }
+
+  // before add new child
+  collectionWillAddChild () {}
+  // after add new child
+  collectionDidAddChild () {}
+
+  collectionWillCreateChild () {}
+
+  // before remove child
+  collectionWillRemoveChild () {}
+  // after remove child
+  collectionDidRemoveChild () {}
 
   toJSON () {
     return {...this._attributes, items: this._items.map(item => item.toJSON())};
@@ -88,31 +101,36 @@ export default class Collection extends Model {
     if (item) {
       if (Array.isArray(item)) {
         item.forEach((item) => {
-          const newItem = this._createModal(item);
-          this._items.push(
-            newItem
-          );
-          // newItem.on('update', () => this.emit('update'))
+          this._addItem(item);
         })
       } else {
-        const newItem = this._createModal(item);
-        this._items.push(
-          newItem
-        );
-        // newItem.on('update', () => this.emit('update'))
+        this._addItem(item);
       }
     }
 
     return this;
   }
 
+  _addItem (item) {
+    respond('collectionWillCreateChild', this, [item]);
+    const newItem = this._createModal(item);
+    respond('collectionWillAddChild', this, [newItem]);
+    this._items.push(
+      newItem
+    );
+    respond('collectionDidAddChild', this, [newItem]);
+  }
+
   _remove (item) {
+    const collectionWillRemoveChild = this.collectionWillRemoveChild;
     let currentItemIndex = this.findIndex((i) => i === item);
     if (currentItemIndex > -1) {
+      respond('collectionWillRemoveChild', this, item);
       this._items = [
         ...this._items.slice(0, currentItemIndex),
         ...this._items.slice(currentItemIndex + 1)
       ]
+      respond('collectionDidRemoveChild', this, [item]);
     }
 
     return this;
@@ -141,13 +159,7 @@ export default class Collection extends Model {
 
   _reset (items) {
     this._clean();
-    if (Array.isArray(items)) {
-      items.forEach((item) => {
-        this._items.push(
-          this._createModal(item)
-        );
-      })
-    }
+    this._add(items);
     return this;
   }
 

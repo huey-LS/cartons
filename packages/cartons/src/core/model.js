@@ -1,5 +1,6 @@
 import Attributes from './attributes';
 import Event, { emitter } from './event';
+import { respond } from './spread';
 import { alias, immutable } from '../utils/descriptors';
 import { incrementCreator } from '../utils/key-creators';
 
@@ -35,6 +36,9 @@ export default class Model extends Event {
     }
   }
 
+  modelWillUpdate () {}
+  modelDidUpdate () {}
+
   @alias('update')
   @emitter('update')
   @immutable()
@@ -42,11 +46,16 @@ export default class Model extends Event {
     key,
     newValue
   ) {
+    let prevAttributes = this._attributes;
+    let nextAttributes;
     if (typeof key === 'string') {
-      this._attributes = this._attributes.set(key, newValue)
+      nextAttributes = this._attributes.set(key, newValue)
     } else {
-      this._attributes = this._attributes.merge(key);
+      nextAttributes = this._attributes.merge(key);
     }
+    respond('modelWillUpdate', this, [prevAttributes, nextAttributes])
+    this._attributes = nextAttributes;
+    respond('modelDidUpdate', this, [prevAttributes, nextAttributes])
     return this;
   }
 

@@ -16,6 +16,14 @@ export default class Todo extends Model {
     toggleComplete
   }
 
+  modelWillUpdate (prevAttributes, nextAttributes) {
+    console.log(`[model will update] new title ${nextAttributes.get('title')} from ${prevAttributes.get('title')}`)
+  }
+
+  modelDidUpdate (prevAttributes, newAttributes) {
+    console.log(`[model did update] new title ${newAttributes.get('title')} from ${prevAttributes.get('title')}`)
+  }
+
   get title () {
     return this.get('title');
   }

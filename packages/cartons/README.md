@@ -27,6 +27,12 @@ import Model from 'cartons/model';
 class CustomModel extends Model {
   static key; // key生成函数 默认使用 key-creators.incrementCreator
   static initialAttributes = { test: 1 }; // 每次实例初始化的属性
+
+  // attributes set 前的 hook
+  modelWillUpdate () {}
+
+  // attributes set 后的 hook
+  modelDidUpdate () {}
 }
 ```
 
@@ -35,7 +41,7 @@ class CustomModel extends Model {
 
 ##### Method
 实例化后可以通过 `get`,`set`对属性进行读写
-```
+```js
 var m = new CustomModel([initialAttributes]);
 m.get('test') // 1
 m.set({ test: 2 })
@@ -44,7 +50,7 @@ m.get('test') // 2
 
 ### Container
 对单个`Model`的一层包装
-```
+```js
 import Container from 'cartons/container';
 class CustomContainer extends Container {
   static Model = CustomModel;
@@ -64,7 +70,7 @@ console.log(container.content instanceof CustomModel) // true
 `Container` 同时拥有 `attributes` 和 `content(Model)` 且互不干扰。
 - 可以通过 `get`, `set` 对`attributes`进行读写
 - 通过 `content`, `updateContent` 对`content(Model)`进行读写
-```
+```js
 container.get('test') // 1
 container.set({ test: 2 })
 container.get('test') // 2
@@ -75,12 +81,25 @@ container.content.get('test') // 2
 
 ### Collection
 对`Model`集合的一层包装
-```
+```js
 import Collection from 'cartons/collection';
 class CustomCollection extends Collection {
   static Model = CustomModel;
   static key;
   static initialAttributes = { test: 1 };
+
+  // hook: before add new child
+  collectionWillAddChild () {}
+  // hook: after add new child
+  collectionDidAddChild () {}
+
+  // hook: before create model
+  collectionWillCreateChild () {}
+
+  // hook: before remove child
+  collectionWillRemoveChild () {}
+  // hook: after remove child
+  collectionDidRemoveChild () {}
 }
 
 // new CustomCollection([initialAttributes], [initialAttributes[]]);
@@ -123,7 +142,7 @@ var collection = new CustomCollection(
 
 #### `bindAction(filter: Function|Object)))`
 ##### usage
-```
+```js
 class A {
   @bindAction((_self) => (_self.model)) action1 = action1;
   model = new CustomModel();
@@ -142,7 +161,7 @@ function action1 (param) {
 
 #### `bindActions(actions: Object.<Function>, options: { actionsAttributeName: string = 'action' })))`
 ##### usage
-```
+```js
 class A {
   @bindActions({ action1, action2, ... })
   model = new CustomModel();
@@ -154,7 +173,7 @@ a.model.actions.action1(1);
 
 #### `createActions()`
 ##### usage
-```
+```js
 class A extend Model {
   @createActions()
   actions = { action1, action2, ...}
