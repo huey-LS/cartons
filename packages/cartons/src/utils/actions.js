@@ -29,7 +29,7 @@ export const bindActions = createThunkAttributeDescriptor(function (
     model[actionsAttributeName] = Object.keys(actions)
       .reduce((current, key) => {
         current[key] = function (...args) {
-          actions[key].call(model, ...args)(model);
+          return actions[key].call(model, ...args)(model);
         }
         return current;
       }, {})
@@ -46,7 +46,7 @@ export const createActions = createThunkAttributeDescriptor(function (
     return Object.keys(actions)
       .reduce((current, key) => {
         current[key] = function (...args) {
-          actions[key].call(model, ...args)(model);
+          return actions[key].call(model, ...args)(model);
         }
         return current;
       }, {})
