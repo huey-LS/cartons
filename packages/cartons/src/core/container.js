@@ -1,7 +1,6 @@
 import Model from './model';
 import { emitter } from './event';
 import { respond } from './spread';
-import { immutable } from '../utils/descriptors';
 export default class Container extends Model {
   static isContainer = function (obj) {
     return obj &&
@@ -11,12 +10,21 @@ export default class Container extends Model {
       )
   }
 
+  static autoSubscribeContent = true;
+
   __cartons_container = true;
 
   constructor (attributes, content) {
     super(attributes);
     this._Model = this.constructor.Model;
     this._content = this._createModal(content);
+    this._autoSubscribeContent = this.constructor.autoSubContent;
+
+    if (this._autoSubscribeContent) {
+      current.on('update', () => {
+        this.emit('update');
+      })
+    }
   }
 
   get content () {
@@ -32,7 +40,6 @@ export default class Container extends Model {
   }
 
   @emitter('update')
-  @immutable()
   updateContent (content) {
     return this._updateContent(content);
   }
@@ -47,7 +54,7 @@ export default class Container extends Model {
     if (item instanceof this._Model) {
       current = item;
     } else {
-      current = new this._Model(item);
+      current = new this._Model(content);
     }
 
     return current;

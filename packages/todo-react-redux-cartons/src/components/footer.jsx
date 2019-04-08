@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { observer } from 'cartons-react';
 
 import { goFilterTodos, clearAllCompleted } from '../actions'
 
@@ -13,6 +14,7 @@ import { goFilterTodos, clearAllCompleted } from '../actions'
     clearAllCompleted: bindActionCreators(clearAllCompleted, dispatch)
   })
 )
+@observer()
 export default class Footer extends React.Component {
   render () {
     const { todoCollection, goFilterTodos, clearAllCompleted } = this.props;

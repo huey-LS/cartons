@@ -35,6 +35,7 @@ export default class Event {
     return removeListener;
   }
 
+  @alias('off')
   removeListener (name, callback) {
     let events = this._events[name];
     if (events) {

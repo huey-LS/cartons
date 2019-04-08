@@ -1,7 +1,7 @@
 import Model from './model';
 import { emitter } from './event';
 import { respond } from './spread';
-import { mixinFunctionFromTransform, immutable } from '../utils/descriptors';
+import { mixinFunctionFromTransform } from '../utils/descriptors';
 
 const transformFromArrayMap = [
   'forEach', 'map', 'reduce', 'reduceRight',
@@ -10,7 +10,7 @@ const transformFromArrayMap = [
 
 @mixinFunctionFromTransform(
   transformFromArrayMap,
-  (target) => target._items
+  (target) => target._children
 )
 export default class Collection extends Model {
   static isCollection = function (obj) {
@@ -21,12 +21,17 @@ export default class Collection extends Model {
       )
   }
 
+  static autoSubscribeChildren = true;
+
   __cartons_collection = true;
 
   constructor (attributes) {
     super(attributes);
     this._Model = this.constructor.Model;
-    this._items = [];
+    this._children = [];
+
+    this._unsubscribes = [];
+    this._autoSubscribeContent = this.constructor.autoSubscribeChildren;
   }
 
   // before add new child
@@ -42,57 +47,49 @@ export default class Collection extends Model {
   collectionDidRemoveChild () {}
 
   toJSON () {
-    return {...this._attributes, items: this._items.map(item => item.toJSON())};
+    return {...this._attributes, children: this._children.map(item => item.toJSON())};
   }
 
   toArray () {
-    return this._items.map(item => item.toJSON());
+    return this._children.map(item => item.toJSON());
   }
 
-  get items () {
-    return this._items;
+  get children () {
+    return this._children;
   }
 
   get length () {
-    return this._items.length;
+    return this._children.length;
   }
 
   set length (value) {}
 
   @emitter('update')
-  @immutable()
   add (item) {
     return this._add(item);
   }
 
   @emitter('update')
-  @immutable()
   remove (item) {
     return this._remove(item);
   }
 
-  @emitter('update')
-  @immutable()
   updateItem (item, filter) {
     return this._updateItem(item, filter);
   }
 
-  @emitter('update')
-  @immutable()
   updateItems (fn) {
     // return this._updateItem(item, filter);
-    this._items = this._items.map((item) => (fn(item)));
+    this._children = this._children.map((item) => (fn(item)));
     return this;
   }
 
   @emitter('update')
-  @immutable()
   clean () {
     return this._clean();
   }
 
   @emitter('update')
-  @immutable()
   reset(items) {
     return this._reset(items);
   }
@@ -115,10 +112,17 @@ export default class Collection extends Model {
     respond('collectionWillCreateChild', this, [item]);
     const newItem = this._createModal(item);
     respond('collectionWillAddChild', this, [newItem]);
-    this._items.push(
+    this._children.push(
       newItem
     );
     respond('collectionDidAddChild', this, [newItem]);
+    if (this._autoSubscribeContent) {
+      let unsubscribe = newItem.on('update', () => {
+        console.log('collection child update');
+        this.emit('update');
+      })
+      this._unsubscribes.push(unsubscribe);
+    }
   }
 
   _remove (item) {
@@ -126,11 +130,20 @@ export default class Collection extends Model {
     let currentItemIndex = this.findIndex((i) => i === item);
     if (currentItemIndex > -1) {
       respond('collectionWillRemoveChild', this, item);
-      this._items = [
-        ...this._items.slice(0, currentItemIndex),
-        ...this._items.slice(currentItemIndex + 1)
+      this._children = [
+        ...this._children.slice(0, currentItemIndex),
+        ...this._children.slice(currentItemIndex + 1)
       ]
       respond('collectionDidRemoveChild', this, [item]);
+
+      if (this._autoSubscribeContent) {
+        let unsubscribe = this._unsubscribes[currentItemIndex];
+        unsubscribe();
+        this._unsubscribes = [
+          ...this._unsubscribes.slice(0, currentItemIndex),
+          ...this._unsubscribes.slice(currentItemIndex + 1)
+        ]
+      }
     }
 
     return this;
@@ -146,14 +159,20 @@ export default class Collection extends Model {
     if (filter) {
       let targetIndex = this.findIndex(filter);
       if (targetIndex >= 0) {
-        this._items[targetIndex] = this._items[targetIndex].set(item);
+        this._children[targetIndex] = this._children[targetIndex].set(item);
       }
     }
     return this;
   }
 
   _clean () {
-    this._items = [];
+    this._children = [];
+    if (this._autoSubscribeContent) {
+      this._unsubscribes.forEach((unsubscribe) => {
+        unsubscribe();
+      })
+      this._unsubscribes = [];
+    }
     return this;
   }
 

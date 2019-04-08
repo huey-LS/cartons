@@ -18,7 +18,6 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
-    "cartons": "^0.1.0",
     "cross-env": "^5.1.4",
     "css-loader": "^0.28.11",
     "html-webpack-plugin": "^3.2.0",
@@ -30,5 +29,9 @@
     "webpack": "^4.6.0",
     "webpack-cli": "^2.1.3",
     "webpack-dev-server": "^3.1.4"
+  },
+  "dependencies": {
+    "cartons": "^0.1.1-beta.4-2",
+    "cartons-react": "0.1.1-beta.3"
   }
 }

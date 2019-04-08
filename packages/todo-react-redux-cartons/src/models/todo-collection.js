@@ -28,7 +28,7 @@ export default class TodoCollection extends Collection {
       case 'ACTIVE':
         return this.getActiveItems();
       default:
-        return this._items;
+        return this.children;
     }
   }
 

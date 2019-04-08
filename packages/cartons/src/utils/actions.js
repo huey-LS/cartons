@@ -21,7 +21,7 @@ export const bindAction = createThunkAttributeDescriptor(function (attribute, fi
   }
 })
 
-export const bindActions = createThunkAttributeDescriptor(function (
+export const modelBindActions = function (
   model, actions,
   { actionsAttributeName = 'actions'} = {}
 ) {
@@ -36,7 +36,9 @@ export const bindActions = createThunkAttributeDescriptor(function (
   }
 
   return model;
-})
+};
+
+export const bindActions = createThunkAttributeDescriptor(modelBindActions)
 
 export const createActions = createThunkAttributeDescriptor(function (
   actions

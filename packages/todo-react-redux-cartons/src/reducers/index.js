@@ -10,7 +10,7 @@ import {
 
 import TodoCollection from '../models/todo-collection';
 
-const initialState = new TodoCollection();
+export const initialState = new TodoCollection();
 
 const reducerTypes = {
   [ADD_TODO] (todoCollection, action) {

@@ -27,6 +27,6 @@
   },
   "dependencies": {
     "react": "^16.3.2",
-    "cartons": "^0.1.1-beta.4"
+    "cartons": "^0.1.1-beta.4-2"
   }
 }

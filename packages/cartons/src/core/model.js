@@ -1,7 +1,7 @@
 import Attributes from './attributes';
 import Event, { emitter } from './event';
 import { respond } from './spread';
-import { alias, immutable } from '../utils/descriptors';
+import { alias } from '../utils/descriptors';
 import { incrementCreator } from '../utils/key-creators';
 
 const defaultKeyCreator = incrementCreator();
@@ -20,7 +20,6 @@ export default class Model extends Event {
   constructor (attributes = {}) {
     super();
 
-    this._immutable = this.constructor.immutable || false;
     let initialAttributes = this.constructor.initialAttributes;
     this._attributes = new Attributes(Object.assign({}, initialAttributes, attributes));
     var keyCreator = this.constructor.key || defaultKeyCreator;
@@ -34,6 +33,21 @@ export default class Model extends Event {
         }
       })
     }
+
+    this.on('update', () => {
+      this._changed = true;
+    })
+  }
+
+  get changed () {
+    let changed = this._changed;
+    // only get once
+    this._changed = false;
+    return changed;
+  }
+
+  set changed (value) {
+    this._changed = value;
   }
 
   modelWillUpdate () {}
@@ -41,7 +55,6 @@ export default class Model extends Event {
 
   @alias('update')
   @emitter('update')
-  @immutable()
   set (
     key,
     newValue
@@ -64,7 +77,6 @@ export default class Model extends Event {
   }
 
   @emitter('update')
-  @immutable()
   remove (attributeName) {
     this._attributes = this._attributes.remove(attributeName);
     return this;
