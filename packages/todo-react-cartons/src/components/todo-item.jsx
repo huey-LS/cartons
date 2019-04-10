@@ -1,24 +1,13 @@
 import * as React from 'react';
-// import { bindAction } from 'cartons/actions';
-import { observer } from 'cartons-react';
-
-// import {
-//   editTodo,
-//   toggleComplete
-// } from '../actions';
 
 const ESCAPE_KEY = 27;
 const ENTER_KEY = 13;
-// const bound = bindAction((_this) => (_this.props.todo))
 
-@observer()
+
 export default class TodoItem extends React.Component {
   state = {
     editing: false
   }
-
-  // @bound editTodo = editTodo;
-  // @bound toggleComplete = toggleComplete;
 
   renderEditing () {
     return (
@@ -78,12 +67,6 @@ export default class TodoItem extends React.Component {
     remove(todo);
   }
 
-  // handleToggleCompleted = () => {
-  //   // let todo = this.props.todo;
-  //   // this.props.modifyCompleted(todo, !todo.completed);
-  //   this.modifyCompleted(!todo.completed);
-  // }
-
   handleToEdit = () => {
     this.setState({
       editing: true,
@@ -111,7 +94,6 @@ export default class TodoItem extends React.Component {
 
   editComplete () {
     this.setState({ editing: false });
-    // this.props.edit(this.props.todo, this.state.editText);
     this.props.todo.actions.editTodo(this.state.editText);
   }
 }

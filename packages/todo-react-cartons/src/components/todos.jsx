@@ -1,17 +1,8 @@
 import * as React from 'react';
 
-// import { bound } from 'cartons/actions';
 import { observer } from 'cartons-react';
 
-// import {
-//   removeTodo,
-//   editTodo,
-//   modifyTodoCompleted,
-//   toggleAllCompleted
-// } from '../actions';
 import TodoItem from './todo-item';
-
-// const bindAction = bound((_this) => (_this.props.todos))
 
 @observer()
 export default class Todos extends React.Component {

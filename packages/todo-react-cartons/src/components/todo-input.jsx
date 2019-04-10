@@ -7,9 +7,6 @@ export default class TodoInput extends React.Component {
     newTodo: ''
   }
 
-  // @bound((_this) => (_this.props.todos))
-  // addTodo = addTodo;
-
   handleNewTodoKeyDown = (event) => {
     if (event.keyCode !== ENTER_KEY) {
       return;
