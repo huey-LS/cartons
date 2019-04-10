@@ -8,10 +8,13 @@ npm install --save cartons
 ## Documentation
 
 ### Cartons
-[doc for cartons](https://github.com/ignous/cartons/tree/master/packages/cartons)
+[doc for cartons](./packages/cartons)
 
 ### Cartons React
-[doc for cartons react](https://github.com/ignous/cartons/tree/master/packages/cartons-react)
+[doc for cartons react](.//packages/cartons-react)
 
 ### Cartons Todo
-[doc for todo-cartons](https://github.com/ignous/cartons/tree/master/packages/todo-react-cartons)
+[doc for todo-cartons](./packages/todo-react-cartons)
+
+### Cartons Todo with Redux
+[doc for todo-cartons](./packages/todo-react-redux-cartons)
