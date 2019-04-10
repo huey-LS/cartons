@@ -58,6 +58,11 @@ export default class Collection extends Model {
     return this._children;
   }
 
+  // will remove v1.0
+  get _items () {
+    return this._children;
+  }
+
   get length () {
     return this._children.length;
   }
