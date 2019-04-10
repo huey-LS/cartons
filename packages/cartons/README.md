@@ -36,20 +36,35 @@ class CustomModel extends Model {
 }
 ```
 
+##### Static Attributes
+- [initialAttributes] {Object|Function} - 建议`Function`
+  设置为`Function`时，将会把返回值作为初始化的属性
+- key - key生成函数 默认使用
+
+#### Hooks
+- modelWillUpdate {Function(prevAttributes, nextAttributes)} - 调用了`set`, 但还没有执行`set` 操作时，此时 `this.get(attributeName) === prevAttributes.get(attributeName)`
+- modelDidUpdate {Function(prevAttributes, nextAttributes)} - 调用了`set`, `set`执行成功, 此时 `this.get(attributeName) === nextAttributes.get(attributeName)`
+
 ##### Arguments
-- `[initialAttributes]` 初始化属性 会和 `static initialAttributes`合并
+- `[attributes]` 初始化属性 会和 `static initialAttributes`合并
 
 ##### Method
 实例化后可以通过 `get`,`set`对属性进行读写
 ```js
-var m = new CustomModel([initialAttributes]);
+var m = new CustomModel();
 m.get('test') // 1
 m.set({ test: 2 })
 m.get('test') // 2
+
+var m = new CustomModel({ test: 3 });
+m.get('test') // 3
 ```
 
+##### Events
+- `update` - 通过`set`更新`attributes`后会触发
+
 ### Container
-对单个`Model`的一层包装
+对单个`Model`的一层包装, 同时会自动监听子`Model`的`update`事件
 ```js
 import Container from 'cartons/container';
 class CustomContainer extends Container {
@@ -62,6 +77,15 @@ var container = new CustomContainer([initialAttributes], [contentInitialAttribut
 
 console.log(container.content instanceof CustomModel) // true
 ```
+
+##### Static Attributes
+- key - 和`model`相同
+- [initialAttributes] - 和`model`相同
+- [Model] - 用于自动生成`content`的构造函数
+
+#### Hooks
+和`model`相同
+
 ##### Arguments
 - `[initialAttributes]` 同`Model`的`initialAttributes`
 - `[contentInitialAttributes]` content的初始化属性
@@ -79,8 +103,13 @@ container.updateContent({ test: 2 })
 container.content.get('test') // 2
 ```
 
+##### Events
+- `update` - 触发时机：
+  1. 通过`set`更新`attributes`后会触发
+  2. `this.content`触发`update`事件后，也会自动响应并触发
+
 ### Collection
-对`Model`集合的一层包装
+对`Model`集合的一层包装, 同时会自动监听所有子`Model`的`update`事件
 ```js
 import Collection from 'cartons/collection';
 class CustomCollection extends Collection {
@@ -108,6 +137,19 @@ var collection = new CustomCollection(
   [{ attr3: 3 }]
 )
 ```
+##### Static Attributes
+- key - 和`model`相同
+- [initialAttributes] - 和`model`相同
+- [Model] - 用于自动生成子元素的构造函数
+
+#### Hooks
+- `model`的所有hooks
+- collectionWillCreateChild {Function(data)} - 创建子`model`之前触发，`data`是创建用的参数
+- collectionWillAddChild {Function(newChild: Model)} - 添加子元素之前触发
+- collectionDidAddChild {Function(newChild: Model)} - 添加子元素成功后触发
+- collectionWillRemoveChild {Function(removeChild: Model)} - 移除子元素之前触发
+- collectionDidRemoveChild {Function(removeChild: Model)} - 移除子元素成功后触发
+
 ##### Arguments
 - `[initialAttributes]` 同`Model`的`initialAttributes`
 - `[initialAttributes[]]` 集合的初始化数据
@@ -121,7 +163,25 @@ var collection = new CustomCollection(
     // 3
     // 3
   ```
+- `add` - 添加一个子元素到最后，并添加监听
+  - @params item {Object} - 子元素属性内容
+- `remove` - 移除一个子元素，并取消监听
+  - @params item {Model} - 子元素实例
+- `clean` - 移除所有子元素，并取消监听
+- `reset` - 重设所有子元素，并添加监听
+  - @params items {Array<Object>}
+- `updateItem` - 更新一个节点(后期可以用`find`代替？)
+  - @params item - 被更新节点，没有`filter`将用`key`做匹配
+  - @params filter {Function()} - 参数同`findIndex`
 
+##### Events
+- `update` - 触发时机：
+  1. 通过`set`更新`attributes`后会触发
+  2. `add`,`remove`,`reset`等操作修改子元素个数的时候
+  2. 每一个子元素触发`update`事件后，也会自动响应并触发
+
+
+## 其他可用的功能
 ### key-creators
 现在提供以下几种key生成规则
 

@@ -79,10 +79,12 @@ export default class Collection extends Model {
     return this._remove(item);
   }
 
+  // can remove? can use find replace?
   updateItem (item, filter) {
     return this._updateItem(item, filter);
   }
 
+  // will remove v1.0, use forEach replace;
   updateItems (fn) {
     // return this._updateItem(item, filter);
     this._children = this._children.map((item) => (fn(item)));
@@ -131,7 +133,6 @@ export default class Collection extends Model {
   }
 
   _remove (item) {
-    const collectionWillRemoveChild = this.collectionWillRemoveChild;
     let currentItemIndex = this.findIndex((i) => i === item);
     if (currentItemIndex > -1) {
       respond('collectionWillRemoveChild', this, item);

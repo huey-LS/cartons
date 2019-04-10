@@ -21,6 +21,9 @@ export default class Model extends Event {
     super();
 
     let initialAttributes = this.constructor.initialAttributes;
+    if (typeof initialAttributes === 'function') {
+      initialAttributes = initialAttributes();
+    }
     this._attributes = new Attributes(Object.assign({}, initialAttributes, attributes));
     var keyCreator = this.constructor.key || defaultKeyCreator;
     if (typeof keyCreator === 'function') {
