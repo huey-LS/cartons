@@ -57,3 +57,14 @@ export const immutable = createThunkAttributeDescriptor(function (value, immutab
   }
   return value;
 })
+
+export const connectModel = createThunkAttributeDescriptor(function (model, options = {}) {
+  if (model.__cartons_model) {
+    model.on('update', () => {
+      if (typeof options.modelDidUpdate === 'function') {
+        options.modelDidUpdate.call(this);
+      }
+    })
+  }
+  return model;
+})

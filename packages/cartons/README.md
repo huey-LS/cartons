@@ -9,7 +9,7 @@ npm install --save cartons
 # Documentation
 - [API](#api)
   - [Model](#model)
-  - [Container](#container)
+  - ~[Container](#container)~ ->  使用 `connectModel` 代替
   - [Collection](#collection)
   - [key-creators](#key-creators)
     - [randomCreator](#randomCreator)
@@ -63,7 +63,32 @@ m.get('test') // 3
 ##### Events
 - `update` - 通过`set`更新`attributes`后会触发
 
+##### ConnectModel
+`model`高级用法，关联2个不同的 `model`
+
+###### usage
+```js
+import Model, { connectModel } from 'cartons/model';
+import ModelA from './model-a';
+
+class ModelB extends Model {
+  @connectModel({
+    modelDidUpdate: function () {
+      // this === b
+      // this.a === a
+      // 需要的各种操作，比如更新属性等
+    }
+  })
+  a = new ModelA();
+}
+
+let b = new ModelB();
+```
+这样`a`被修改的时候，会关联触发`b`的`update`事件
+
 ### Container
+即将移除，请用 `connectModal` 代替
+
 对单个`Model`的一层包装, 同时会自动监听子`Model`的`update`事件
 ```js
 import Container from 'cartons/container';

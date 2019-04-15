@@ -1,10 +1,12 @@
 import Attributes from './attributes';
 import Event, { emitter } from './event';
 import { respond } from './spread';
-import { alias } from '../utils/descriptors';
+import { alias, connectModel } from '../utils/descriptors';
 import { incrementCreator } from '../utils/key-creators';
 
 const defaultKeyCreator = incrementCreator();
+
+export { connectModel };
 
 export default class Model extends Event {
   static isModel = function (obj) {

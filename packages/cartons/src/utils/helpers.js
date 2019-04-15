@@ -89,13 +89,6 @@ export function isModel (obj) {
     )
 }
 
-export function isContainer (obj) {
-  return obj &&
-    (
-      obj.__cartons_container
-    )
-}
-
 export function isCollection (obj) {
   return obj &&
     (
