@@ -1,6 +1,6 @@
 {
   "name": "cartons-vue",
-  "version": "0.2.0-beta.1",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "files": [
@@ -25,7 +25,7 @@
     "cross-env": "^5.1.4"
   },
   "dependencies": {
-    "vue": "^2.6.10",
-    "cartons": "0.2.0-beta.1"
+    "cartons": "^0.2.0",
+    "vue": "^2.6.10"
   }
 }
