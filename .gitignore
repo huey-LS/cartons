@@ -3,6 +3,7 @@
 .idea
 
 node_modules
+package-lock.json
 .vscode
 
 .nyc_output
