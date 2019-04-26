@@ -1,12 +1,9 @@
 import Attributes from './attributes';
-import Event, { emitter } from './event';
 import { respond } from './spread';
-import { alias, connectModel } from '../utils/descriptors';
+import { alias } from './descriptors';
 import { incrementCreator } from '../utils/key-creators';
 
 const defaultKeyCreator = incrementCreator();
-
-export { connectModel };
 
 export default class Model extends Event {
   static isModel = function (obj) {
@@ -38,28 +35,12 @@ export default class Model extends Event {
         }
       })
     }
-
-    this.on('update', () => {
-      this._changed = true;
-    })
-  }
-
-  get changed () {
-    let changed = this._changed;
-    // only get once
-    this._changed = false;
-    return changed;
-  }
-
-  set changed (value) {
-    this._changed = value;
   }
 
   modelWillUpdate () {}
   modelDidUpdate () {}
 
   @alias('update')
-  @emitter('update')
   set (
     key,
     newValue
@@ -67,9 +48,9 @@ export default class Model extends Event {
     let prevAttributes = this._attributes;
     let nextAttributes;
     if (typeof key === 'string') {
-      nextAttributes = this._attributes.set(key, newValue)
+      nextAttributes = prevAttributes.set(key, newValue)
     } else {
-      nextAttributes = this._attributes.merge(key);
+      nextAttributes = prevAttributes.merge(key);
     }
     respond('modelWillUpdate', this, [prevAttributes, nextAttributes])
     this._attributes = nextAttributes;
@@ -81,17 +62,16 @@ export default class Model extends Event {
     return this._attributes.get(attributeName);
   }
 
-  @emitter('update')
   remove (attributeName) {
-    this._attributes = this._attributes.remove(attributeName);
+    let prevAttributes = this._attributes;
+    let nextAttributes = this._attributes.remove(attributeName);
+    respond('modelWillUpdate', this, [prevAttributes, nextAttributes])
+    this._attributes = nextAttributes;
+    respond('modelDidUpdate', this, [prevAttributes, nextAttributes])
     return this;
   }
 
   toJSON () {
     return this._attributes.toJSON();
-  }
-
-  toJSONStringify () {
-    return JSON.stringify(this.toJSON());
   }
 }

@@ -1,7 +1,6 @@
 import Model from './model';
-import { emitter } from './event';
 import { respond } from './spread';
-import { mixinFunctionFromTransform } from '../utils/descriptors';
+import { mixinFunctionFromTransform } from './descriptors';
 
 const transformFromArrayMap = [
   'forEach', 'map', 'reduce', 'reduceRight',
@@ -21,9 +20,8 @@ export default class Collection extends Model {
       )
   }
 
-  static autoSubscribeChildren = true;
-
   __cartons_collection = true;
+  autoSubscribeChildren = true;
 
   constructor (attributes) {
     super(attributes);
@@ -31,20 +29,12 @@ export default class Collection extends Model {
     this._children = [];
 
     this._unsubscribes = [];
-    this._autoSubscribeContent = this.constructor.autoSubscribeChildren;
   }
 
-  // before add new child
-  collectionWillAddChild () {}
-  // after add new child
-  collectionDidAddChild () {}
-
-  collectionWillCreateChild () {}
-
-  // before remove child
-  collectionWillRemoveChild () {}
-  // after remove child
-  collectionDidRemoveChild () {}
+  // before children change
+  collectionWillUpdateChildren () {}
+  // after children change
+  collectionDidUpdateChildren () {}
 
   toJSON () {
     return {...this._attributes, children: this._children.map(item => item.toJSON())};
@@ -58,47 +48,29 @@ export default class Collection extends Model {
     return this._children;
   }
 
-  // will remove v1.0
-  get _items () {
-    return this._children;
-  }
-
   get length () {
     return this._children.length;
   }
 
-  set length (value) {}
-
-  @emitter('update')
-  add (item) {
-    return this._add(item);
-  }
-
-  @emitter('update')
-  remove (item) {
-    return this._remove(item);
-  }
-
-  // can remove? can use find replace?
-  updateItem (item, filter) {
-    return this._updateItem(item, filter);
-  }
-
-  // will remove v1.0, use forEach replace;
-  updateItems (fn) {
-    // return this._updateItem(item, filter);
-    this._children = this._children.map((item) => (fn(item)));
+  // @emitter('update')
+  addChild (item) {
+    this._add(item);
+    this._resetSubscribeChildren();
     return this;
   }
 
-  @emitter('update')
-  clean () {
-    return this._clean();
+  // @emitter('update')
+  removeChild (item) {
+    this._remove(item);
+    this._resetSubscribeChildren();
+    return this;
   }
 
-  @emitter('update')
-  reset(items) {
-    return this._reset(items);
+  // @emitter('update')
+  resetChildren (items) {
+    this._reset(items);
+    this._resetSubscribeChildren();
+    return this;
   }
 
   _add (item) {
@@ -116,69 +88,62 @@ export default class Collection extends Model {
   }
 
   _addItem (item) {
-    respond('collectionWillCreateChild', this, [item]);
     const newItem = this._createModal(item);
-    respond('collectionWillAddChild', this, [newItem]);
-    this._children.push(
+    const prevChildren = this._children;
+    const nextChildren = [
+      ...prevChildren,
       newItem
-    );
-    respond('collectionDidAddChild', this, [newItem]);
-    if (this._autoSubscribeContent) {
-      let unsubscribe = newItem.on('update', () => {
-        console.log('collection child update');
-        this.emit('update');
-      })
-      this._unsubscribes.push(unsubscribe);
-    }
+    ];
+    respond('collectionWillUpdateChildren', this, [prevChildren, nextChildren]);
+    this._children = nextChildren;
+    respond('collectionDidUpdateChildren', this, [prevChildren, nextChildren]);
+    return this;
   }
 
   _remove (item) {
     let currentItemIndex = this.findIndex((i) => i === item);
     if (currentItemIndex > -1) {
-      respond('collectionWillRemoveChild', this, item);
-      this._children = [
-        ...this._children.slice(0, currentItemIndex),
-        ...this._children.slice(currentItemIndex + 1)
-      ]
-      respond('collectionDidRemoveChild', this, [item]);
-
-      if (this._autoSubscribeContent) {
-        let unsubscribe = this._unsubscribes[currentItemIndex];
-        unsubscribe();
-        this._unsubscribes = [
-          ...this._unsubscribes.slice(0, currentItemIndex),
-          ...this._unsubscribes.slice(currentItemIndex + 1)
-        ]
-      }
+      const prevChildren = this._children;
+      const nextChildren = [
+        ...prevChildren.slice(0, currentItemIndex),
+        ...prevChildren.slice(currentItemIndex + 1)
+      ];
+      respond('collectionWillUpdateChildren', this, [prevChildren, nextChildren]);
+      this._children = nextChildren;
+      respond('collectionDidUpdateChildren', this, [prevChildren, nextChildren]);
     }
 
     return this;
   }
 
-  _updateItem (item, filter) {
-    if ('function' !== typeof filter) {
-      let key = this._Model.key;
-      if (key && item[key]) {
-        filter = (i) => (i.get(key) === item[key])
-      }
-    }
-    if (filter) {
-      let targetIndex = this.findIndex(filter);
-      if (targetIndex >= 0) {
-        this._children[targetIndex] = this._children[targetIndex].set(item);
-      }
-    }
+
+  _resetSubscribeChildren () {
+    this._unsubscribeChildren();
+    this._subscribeChildren();
     return this;
   }
 
-  _clean () {
-    this._children = [];
-    if (this._autoSubscribeContent) {
+  _subscribeChildren () {
+    if (this.autoSubscribeChildren) {
+      this.forEach((child) => {
+        // let unsubscribe = child.on('update', () => {
+        //   this.emit('update');
+        // })
+        this._unsubscribes.push(unsubscribe);
+      })
+    }
+  }
+  _unsubscribeChildren () {
+    if (this.autoSubscribeChildren) {
       this._unsubscribes.forEach((unsubscribe) => {
         unsubscribe();
       })
       this._unsubscribes = [];
     }
+  }
+
+  _clean () {
+    this._children = [];
     return this;
   }
 

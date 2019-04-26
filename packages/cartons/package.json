@@ -6,9 +6,7 @@
   "files": [
     "lib",
     "index.js",
-    "actions.js",
     "collection.js",
-    "container.js",
     "model.js",
     "key-creators.js"
   ],

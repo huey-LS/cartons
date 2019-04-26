@@ -7,6 +7,25 @@ export function clone (obj) {
 export function createThunkAttributeDescriptor (callback) {
   return function (options) {
     return function (target, key, descriptor) {
+      if (key) {
+        // 有 key 表示是 descriptor 的用法
+        return mixinDescriptor(target, key, descriptor);
+      } else {
+        // 没有 key 表示是普通thunk
+        return mixinThunkFunction({}, target, options)
+      }
+    }
+
+    function mixinThunkFunction (target, value, options) {
+      return callback.call(
+        target,
+        target,
+        value,
+        options,
+      );
+    }
+
+    function mixinDescriptor (target, key, descriptor) {
       if (!descriptor) {
         descriptor = createInitializerDescriptor(target, key);
       }
@@ -16,10 +35,24 @@ export function createThunkAttributeDescriptor (callback) {
         descriptor.initializer = function () {
           const _self = this;
           const value = oldInitializer.call(_self);
-          return callback.call(_self, value, options);
+          return callback.call(
+            _self,
+            _self,
+            value,
+            options,
+            key,
+            descriptor
+          );
         }
       } else if (typeof descriptor.value !== 'undefined') {
-        descriptor.value = callback.call(target, descriptor.value, options)
+        descriptor.value = callback.call(
+          target,
+          target,
+          descriptor.value,
+          options,
+          key,
+          descriptor
+        )
       }
       return descriptor;
     }
@@ -65,17 +98,20 @@ export function createMixer (TargetClass) {
       }
     }
 
-    MixinClass.prototype = Object.create(MixinClass.prototype, Object.getOwnPropertyDescriptors(TargetClass.prototype))
+    MixinClass.prototype = Object.create(
+      MixinClass.prototype,
+      Object.getOwnPropertyDescriptors(TargetClass.prototype)
+    )
     return MixinClass;
   }
 }
 
 export function mixin (SuperClass) {
-  return (MixinSuperClass, ...args) => {
+  return (MixinSuperClass, ...otherMixinSuperClasses) => {
     if (MixinSuperClass) {
       return mixin(
         createMixer(MixinSuperClass)(SuperClass)
-      )(...args)
+      )(...otherMixinSuperClasses)
     } else {
       return SuperClass;
     }

@@ -1,4 +1,4 @@
-import { alias } from '../utils/descriptors';
+import { alias } from './descriptors';
 import { createMixer, createThunkAttributeDescriptor } from '../utils/helpers';
 
 export default class Event {
@@ -14,7 +14,6 @@ export default class Event {
 
   _events = {};
 
-  @alias('trigger')
   emit (name, data) {
     let events = this._events[name];
     if (events) {
@@ -48,7 +47,27 @@ export default class Event {
   }
 }
 
+class EventAutoEmitUpdate extends Events {
+  // for model update
+  modelDidUpdate (...args) {
+    if (typeof super.modelDidUpdate === 'function') {
+      super.modelDidUpdate.call(this, ...args);
+    }
+    this.emit('update');
+  }
+
+  // for collection child update
+  collectionDidUpdateChildren (...args) {
+    if (typeof super.collectionDidUpdateChildren === 'function') {
+      super.collectionDidUpdateChildren.call(this, ...args);
+    }
+    this.emit('update');
+  }
+}
+
 export const mixEvent = createMixer(Event);
+
+export const mixEventAutoEmit = createMixer(EventAutoEmitUpdate);
 
 export const emitter = createThunkAttributeDescriptor(function (value, eventName) {
   if (typeof value === 'function') {

@@ -9,12 +9,11 @@ npm install --save cartons
 # Documentation
 - [API](#api)
   - [Model](#model)
-  - ~[Container](#container)~ ->  使用 `connectModel` 代替
   - [Collection](#collection)
+  - [connect](#connect)
   - [key-creators](#key-creators)
     - [randomCreator](#randomCreator)
     - [incrementCreator](#incrementCreator)
-  - [actions](#actions)
 - [Usage with react](https://github.com/ignous/cartons/tree/master/packages/cartons-react/README.md)
 
 ## API
@@ -24,6 +23,7 @@ npm install --save cartons
 #### Usage
 ```js
 import Model from 'cartons/model';
+
 class CustomModel extends Model {
   static key; // key生成函数 默认使用 key-creators.incrementCreator
   static initialAttributes = { test: 1 }; // 每次实例初始化的属性
@@ -60,19 +60,68 @@ var m = new CustomModel({ test: 3 });
 m.get('test') // 3
 ```
 
-##### Events
-- `update` - 通过`set`更新`attributes`后会触发
+### Collection
+对`Model`集合的一层包装, 同时会自动监听所有子`Model`的`update`事件
+```js
+import Collection from 'cartons/collection';
+class CustomCollection extends Collection {
+  static Model = CustomModel;
+  static key;
+  static initialAttributes = { test: 1 };
 
-##### ConnectModel
+  // hook: before update children (includes remove, add)
+  collectionWillUpdateChildren () {}
+  // hook: after update children (includes remove, add)
+  collectionDidUpdateChildren () {}
+}
+
+// new CustomCollection([initialAttributes], [initialAttributes[]]);
+var collection = new CustomCollection(
+  { attr2: 2 }
+)
+```
+##### Static Attributes
+- key - 和`model`相同
+- [initialAttributes] - 和`model`相同
+- [Model] - 用于自动生成子元素的构造函数
+
+#### Hooks
+- `model`的所有hooks
+- collectionDidUpdateChildren {Function(prevChildren: Array<Model>, nextChildren: Array<Model>)} - 添加/删除子元素之前触发
+- collectionDidAddChild {Function(prevChildren: Array<Model>, nextChildren: Array<Model>)} - 添加/删除子元素成功后触发
+
+##### Arguments
+- `[initialAttributes]` 同`Model`的`initialAttributes`
+
+##### Method
+- 可以使用`Array`的各种方法 已支持`forEach`, `map`, `reduce`, `reduceRight`, `slice`, `filter`, `find`, `findIndex`, `some`, `every`, `includes`, `indexOf`
+  ```
+    collection.forEach((item) => {
+      console.log(item.get('attr3'))
+    })
+    // 3
+    // 3
+  ```
+- `addChild` - 添加一个子元素到最后，并添加监听
+  - @params item {Object} - 子元素属性内容
+- `removeChild` - 移除一个子元素，并取消监听
+  - @params item {Model} - 子元素实例
+- `resetChildren` - 重设所有子元素，并添加监听
+  - @params items {Array<Object>}
+
+
+## connect
 `model`高级用法，关联2个不同的 `model`
 
-###### usage
+### usage
 ```js
-import Model, { connectModel } from 'cartons/model';
+import Model from 'cartons/model';
+import { connect } from 'cartons/descriptors';
+
 import ModelA from './model-a';
 
 class ModelB extends Model {
-  @connectModel({
+  @connect({
     modelDidUpdate: function () {
       // this === b
       // this.a === a
@@ -85,126 +134,6 @@ class ModelB extends Model {
 let b = new ModelB();
 ```
 这样`a`被修改的时候，会关联触发`b`的`update`事件
-
-### Container
-即将移除，请用 `connectModal` 代替
-
-对单个`Model`的一层包装, 同时会自动监听子`Model`的`update`事件
-```js
-import Container from 'cartons/container';
-class CustomContainer extends Container {
-  static Model = CustomModel;
-  static key;
-  static initialAttributes = { test: 1 };
-}
-
-var container = new CustomContainer([initialAttributes], [contentInitialAttributes]);
-
-console.log(container.content instanceof CustomModel) // true
-```
-
-##### Static Attributes
-- key - 和`model`相同
-- [initialAttributes] - 和`model`相同
-- [Model] - 用于自动生成`content`的构造函数
-
-#### Hooks
-和`model`相同
-
-##### Arguments
-- `[initialAttributes]` 同`Model`的`initialAttributes`
-- `[contentInitialAttributes]` content的初始化属性
-
-##### Method
-`Container` 同时拥有 `attributes` 和 `content(Model)` 且互不干扰。
-- 可以通过 `get`, `set` 对`attributes`进行读写
-- 通过 `content`, `updateContent` 对`content(Model)`进行读写
-```js
-container.get('test') // 1
-container.set({ test: 2 })
-container.get('test') // 2
-container.content.get('test') // 1
-container.updateContent({ test: 2 })
-container.content.get('test') // 2
-```
-
-##### Events
-- `update` - 触发时机：
-  1. 通过`set`更新`attributes`后会触发
-  2. `this.content`触发`update`事件后，也会自动响应并触发
-
-### Collection
-对`Model`集合的一层包装, 同时会自动监听所有子`Model`的`update`事件
-```js
-import Collection from 'cartons/collection';
-class CustomCollection extends Collection {
-  static Model = CustomModel;
-  static key;
-  static initialAttributes = { test: 1 };
-
-  // hook: before add new child
-  collectionWillAddChild () {}
-  // hook: after add new child
-  collectionDidAddChild () {}
-
-  // hook: before create model
-  collectionWillCreateChild () {}
-
-  // hook: before remove child
-  collectionWillRemoveChild () {}
-  // hook: after remove child
-  collectionDidRemoveChild () {}
-}
-
-// new CustomCollection([initialAttributes], [initialAttributes[]]);
-var collection = new CustomCollection(
-  { attr2: 2 },
-  [{ attr3: 3 }]
-)
-```
-##### Static Attributes
-- key - 和`model`相同
-- [initialAttributes] - 和`model`相同
-- [Model] - 用于自动生成子元素的构造函数
-
-#### Hooks
-- `model`的所有hooks
-- collectionWillCreateChild {Function(data)} - 创建子`model`之前触发，`data`是创建用的参数
-- collectionWillAddChild {Function(newChild: Model)} - 添加子元素之前触发
-- collectionDidAddChild {Function(newChild: Model)} - 添加子元素成功后触发
-- collectionWillRemoveChild {Function(removeChild: Model)} - 移除子元素之前触发
-- collectionDidRemoveChild {Function(removeChild: Model)} - 移除子元素成功后触发
-
-##### Arguments
-- `[initialAttributes]` 同`Model`的`initialAttributes`
-- `[initialAttributes[]]` 集合的初始化数据
-
-##### Method
-- 可以使用`Array`的各种方法 已支持`forEach`, `map`, `reduce`, `reduceRight`, `slice`, `filter`, `find`, `findIndex`, `some`, `every`, `includes`, `indexOf`
-  ```
-    collection.forEach((item) => {
-      console.log(item.get('attr3'))
-    })
-    // 3
-    // 3
-  ```
-- `add` - 添加一个子元素到最后，并添加监听
-  - @params item {Object} - 子元素属性内容
-- `remove` - 移除一个子元素，并取消监听
-  - @params item {Model} - 子元素实例
-- `clean` - 移除所有子元素，并取消监听
-- `reset` - 重设所有子元素，并添加监听
-  - @params items {Array<Object>}
-- `updateItem` - 更新一个节点(后期可以用`find`代替？)
-  - @params item - 被更新节点，没有`filter`将用`key`做匹配
-  - @params filter {Function()} - 参数同`findIndex`
-
-##### Events
-- `update` - 触发时机：
-  1. 通过`set`更新`attributes`后会触发
-  2. `add`,`remove`,`reset`等操作修改子元素个数的时候
-  2. 每一个子元素触发`update`事件后，也会自动响应并触发
-
 
 ## 其他可用的功能
 ### key-creators

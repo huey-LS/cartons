@@ -1,10 +1,15 @@
-export * from './utils/descriptors';
+export * from './core/descriptors';
 export { default as Model } from './core/model';
 export { default as Collection } from './core/collection';
-export { default as Container } from './core/container';
-import * as descriptors from './utils/descriptors';
+import * as descriptors from './core/descriptors';
 export { descriptors };
 import * as keyCreators from './utils/key-creators';
 export { keyCreators };
-import * as actions from './utils/actions';
-export { actions };
+
+export default {
+  Model,
+  Collection,
+  descriptors,
+  keyCreators,
+  connect: descriptors.connect
+}
