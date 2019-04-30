@@ -1,6 +1,7 @@
 import Model from './model';
-import { respond } from './spread';
-import { mixinFunctionFromTransform } from './descriptors';
+import { respond } from '../shared/spread';
+import { mixinFunctionFromTransform } from '../shared/utils';
+// import { mixEventAutoEmit } from './event';
 
 const transformFromArrayMap = [
   'forEach', 'map', 'reduce', 'reduceRight',
@@ -21,7 +22,7 @@ export default class Collection extends Model {
   }
 
   __cartons_collection = true;
-  autoSubscribeChildren = true;
+  autoSubscribeChildren = false;
 
   constructor (attributes) {
     super(attributes);
@@ -35,6 +36,12 @@ export default class Collection extends Model {
   collectionWillUpdateChildren () {}
   // after children change
   collectionDidUpdateChildren () {}
+
+  clone () {
+    const newThis = super.clone(this);
+    newThis._children = this._children.slice(0);
+    return newThis;
+  }
 
   toJSON () {
     return {...this._attributes, children: this._children.map(item => item.toJSON())};

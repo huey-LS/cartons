@@ -1,6 +1,6 @@
 import ReactDOM, { render } from 'react-dom';
 import * as React from 'react';
-import { bindActions } from 'cartons/actions';
+import { descriptors } from 'cartons/helpers';
 
 
 import './css/base.css';
@@ -21,15 +21,18 @@ import {
 } from './actions';
 
 
+const { bindActions } = descriptors;
+
 class App extends React.Component {
-  @bindActions({
-    goFilterTodos,
-    addTodo,
-    removeTodo,
-    toggleAllCompleted,
-    clearAllCompleted
-  })
-  todos = new TodoCollection();
+  todos = bindActions({
+      actionsAttributeName: 'actions'
+    })({
+      goFilterTodos,
+      addTodo,
+      removeTodo,
+      toggleAllCompleted,
+      clearAllCompleted
+    })(new TodoCollection());
 
   render () {
     const todos = this.todos;

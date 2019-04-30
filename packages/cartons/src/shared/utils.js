@@ -4,6 +4,28 @@ export function clone (obj) {
   return newModel;
 }
 
+export const mixinFunctionFromTransform = (
+  map,
+  transform
+) => (target) => {
+  if (Array.isArray(map) && 'function' === typeof transform) {
+    map.forEach((key) => {
+      if('function' === typeof Array.prototype[key]) {
+        Object.defineProperty(target.prototype, key, {
+          value: function (...args) {
+            let currentTarget = transform(this);
+            return currentTarget && currentTarget[key] && currentTarget[key](...args)
+          },
+          writable: true,
+          enumerable: false,
+          configurable: true
+        });
+      }
+    })
+  }
+  return target;
+}
+
 export function createThunkAttributeDescriptor (callback) {
   return function (options) {
     return function (target, key, descriptor) {
@@ -12,7 +34,7 @@ export function createThunkAttributeDescriptor (callback) {
         return mixinDescriptor(target, key, descriptor);
       } else {
         // 没有 key 表示是普通thunk
-        return mixinThunkFunction({}, target, options)
+        return mixinThunkFunction(Object.create(null), target, options)
       }
     }
 
@@ -44,8 +66,8 @@ export function createThunkAttributeDescriptor (callback) {
             descriptor
           );
         }
-      } else if (typeof descriptor.value !== 'undefined') {
-        descriptor.value = callback.call(
+      } else {
+        const newValue = callback.call(
           target,
           target,
           descriptor.value,
@@ -53,6 +75,10 @@ export function createThunkAttributeDescriptor (callback) {
           key,
           descriptor
         )
+
+        if (typeof newValue !== 'undefined') {
+          descriptor.value = newValue;
+        }
       }
       return descriptor;
     }

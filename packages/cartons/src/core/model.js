@@ -1,11 +1,12 @@
 import Attributes from './attributes';
-import { respond } from './spread';
+import { respond } from '../shared/spread';
+import { clone } from '../shared/utils';
 import { alias } from './descriptors';
-import { incrementCreator } from '../utils/key-creators';
+import { incrementCreator } from '../shared/key-creators';
 
 const defaultKeyCreator = incrementCreator();
 
-export default class Model extends Event {
+export default class Model {
   static isModel = function (obj) {
     return obj &&
       (
@@ -17,7 +18,7 @@ export default class Model extends Event {
   __cartons_model = true;
 
   constructor (attributes = {}) {
-    super();
+    // super();
 
     let initialAttributes = this.constructor.initialAttributes;
     if (typeof initialAttributes === 'function') {
@@ -40,7 +41,6 @@ export default class Model extends Event {
   modelWillUpdate () {}
   modelDidUpdate () {}
 
-  @alias('update')
   set (
     key,
     newValue
@@ -73,5 +73,9 @@ export default class Model extends Event {
 
   toJSON () {
     return this._attributes.toJSON();
+  }
+
+  clone () {
+    return clone(this);
   }
 }

@@ -1,7 +1,7 @@
 import {
   formatPath,
   getDataWithPath
-} from '../utils/path';
+} from '../shared/path';
 
 /**
  * @export

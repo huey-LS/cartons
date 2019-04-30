@@ -1,29 +1,7 @@
 import {
   createThunkAttributeDescriptor,
   isModel
-} from '../utils/helpers';
-
-export const mixinFunctionFromTransform = (
-  map,
-  transform
-) => (target) => {
-  if (Array.isArray(map) && 'function' === typeof transform) {
-    map.forEach((key) => {
-      if('function' === typeof Array.prototype[key]) {
-        Object.defineProperty(target.prototype, key, {
-          value: function (...args) {
-            let currentTarget = transform(this);
-            return currentTarget && currentTarget[key] && currentTarget[key](...args)
-          },
-          writable: true,
-          enumerable: false,
-          configurable: true
-        });
-      }
-    })
-  }
-  return target;
-}
+} from '../shared/utils';
 
 export const alias = createThunkAttributeDescriptor(function (
   target, value, aliasName, key, descriptor
@@ -42,6 +20,27 @@ export const alias = createThunkAttributeDescriptor(function (
   })
 
   return target;
+});
+
+export const serialized = createThunkAttributeDescriptor(function (
+  target, value, options, key, descriptor
+) {
+  let name, type;
+  if (typeof options === 'string') {
+    name = options;
+  } else {
+    name = options.name;
+    type = options.type;
+  }
+
+  descriptor.get = function () {
+    let value = this.get(name);
+    if (type) {
+      value = type(value);
+    }
+    return value;
+  }
+  delete descriptor.initializer;
 });
 
 export const connectModel = createThunkAttributeDescriptor(function (
@@ -63,10 +62,10 @@ export const connectModel = createThunkAttributeDescriptor(function (
 });
 
 export const bindActions = createThunkAttributeDescriptor(function (
-  target, actions, options = {}
+  target, actions, options = {}, actionsAttributeName
 ) {
-  const { actionsAttributeName = 'actions' } = options;
-  target[actionsAttributeName] = Object.keys(actions)
+  actionsAttributeName = actionsAttributeName || options.actionsAttributeName || 'actions';
+  let newActions = Object.keys(actions)
     .reduce((current, key) => {
       current[key] = function (...args) {
         return actions[key].call(target, ...args)(target);
@@ -74,5 +73,5 @@ export const bindActions = createThunkAttributeDescriptor(function (
       return current;
     }, {})
 
-  return target;
+  return newActions;
 })

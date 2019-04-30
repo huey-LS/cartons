@@ -1,5 +1,5 @@
 import { alias } from './descriptors';
-import { createMixer, createThunkAttributeDescriptor } from '../utils/helpers';
+import { createMixer, createThunkAttributeDescriptor } from '../shared/utils';
 
 export default class Event {
   static isEvent = function (obj) {

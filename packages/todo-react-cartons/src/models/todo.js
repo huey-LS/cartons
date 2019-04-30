@@ -1,16 +1,18 @@
 import Model from 'cartons/model';
-import { createActions } from 'cartons/actions';
-import { incrementCreator } from 'cartons/key-creators';
+import { keyCreators, descriptors } from 'cartons/helpers';
 
 import {
   editTodo,
   toggleComplete
 } from '../actions';
 
+const { serialized, bindActions } = descriptors;
+const { incrementCreator } = keyCreators;
+
 export default class Todo extends Model {
   static key = incrementCreator('todo-');
 
-  @createActions()
+  @bindActions()
   actions = {
     editTodo,
     toggleComplete
@@ -24,13 +26,14 @@ export default class Todo extends Model {
     console.log(`[model did update] new title ${newAttributes.get('title')} from ${prevAttributes.get('title')}`)
   }
 
-  get title () {
-    return this.get('title');
-  }
+  @serialized('title')
+  title;
 
-  get completed () {
-    return this.isCompleted();
-  }
+  @serialized({
+    name: 'completed',
+    type: Boolean
+  })
+  completed;
 
   toggleComplete () {
     return this.set({

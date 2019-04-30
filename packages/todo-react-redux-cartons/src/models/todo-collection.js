@@ -1,12 +1,23 @@
-import { descriptors } from 'cartons';
 import Collection from 'cartons/collection';
+import { keyCreators } from 'cartons/helpers';
 import Todo from './todo';
+
+const { incrementCreator } = keyCreators;
 
 export default class TodoCollection extends Collection {
   static Model = Todo;
-  static immutable = true;
+  static key = incrementCreator('todo-collection-');
   static initialAttributes = {
     filterType: 'ALL'
+  }
+
+  // before children change
+  collectionWillUpdateChildren (prevChildren, nextChildren) {
+    console.log('collectionWillUpdateChildren', prevChildren, nextChildren)
+  }
+  // after children change
+  collectionDidUpdateChildren (prevChildren, nextChildren) {
+    console.log('collectionDidUpdateChildren', prevChildren, nextChildren)
   }
 
   isAllCompleted () {
@@ -15,9 +26,11 @@ export default class TodoCollection extends Collection {
 
   toggleAllCompleted () {
     let targetCompleted = !this.isAllCompleted();
-    return this.updateItems((item) => (
-      item.set({ 'completed': targetCompleted })
-    ))
+    return this.resetChildren(
+      this.map((item) => (
+        item.clone().set({ 'completed': targetCompleted })
+      ))
+    )
   }
 
   getFilterItems () {
@@ -41,8 +54,10 @@ export default class TodoCollection extends Collection {
   }
 
   clearCompletedTodos () {
-    return this.reset(
-      this.filter((item) => !item.completed)
+    return this.resetChildren(
+      this.filter((item) => (
+        !item.completed
+      ))
     )
   }
 }

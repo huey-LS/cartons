@@ -14,37 +14,47 @@ export const initialState = new TodoCollection();
 
 const reducerTypes = {
   [ADD_TODO] (todoCollection, action) {
-    return todoCollection.add(action.todo);
+    return todoCollection.clone().addChild(action.todo);
   },
 
   [REMOVE_TODO] (todoCollection, action) {
-    return todoCollection.remove(action.todo);
+    return todoCollection.clone().removeChild(action.todo);
   },
 
   [EDIT_TODO] (todoCollection, action) {
-    return todoCollection.updateItem(
-      { title: action.newTitle },
-      (todo) => (todo === action.todo)
+    return todoCollection.clone().resetChildren(
+      todoCollection.map((todo) => {
+        if (todo.key === action.todo.key) {
+          return todo.clone().set({ title: action.newTitle })
+        } else {
+          return todo;
+        }
+      })
     );
   },
 
   [MODIFY_TODO_COMPLETED] (todoCollection, action) {
-    return todoCollection.updateItem(
-      { completed: action.completed },
-      (todo) => (todo === action.todo)
+    return todoCollection.clone().resetChildren(
+      todoCollection.map((todo) => {
+        if (todo.key === action.todo.key) {
+          return todo.clone().set({ completed: action.completed });
+        } else {
+          return todo;
+        }
+      })
     );
   },
 
   [TOGGLE_ALL_COMPLETED] (todoCollection) {
-    return todoCollection.toggleAllCompleted();
+    return todoCollection.clone().toggleAllCompleted();
   },
 
   [GO_FILTER_TODOS] (todoCollection, { filterType }) {
-    return todoCollection.set({ filterType })
+    return todoCollection.clone().set({ filterType })
   },
 
   [CLEAR_COMPLETED_TODOS] (todoCollection) {
-    return todoCollection.clearCompletedTodos()
+    return todoCollection.clone().clearCompletedTodos()
   }
 }
 

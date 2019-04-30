@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { observer } from 'cartons-react';
+// import { observer } from 'cartons-react';
 
 import {
   removeTodo,
@@ -24,7 +24,6 @@ const ENTER_KEY = 13;
     toggleAllCompleted: bindActionCreators(toggleAllCompleted, dispatch)
   })
 )
-@observer()
 export default class Todos extends React.Component {
   render () {
     const {
