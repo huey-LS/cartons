@@ -11,6 +11,8 @@
   "author": "ignous",
   "license": "ISC",
   "devDependencies": {
-    "lerna": "^2.9.0"
+    "lerna": "^2.9.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.0.0"
   }
 }

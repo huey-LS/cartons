@@ -1,7 +1,8 @@
 import Model from './model';
+import { MODEL, COLLECTION } from '../constants/life-cycle';
+import { Event } from './event';
 import { respond } from '../shared/spread';
 import { mixinFunctionFromTransform } from '../shared/utils';
-// import { mixEventAutoEmit } from './event';
 
 const transformFromArrayMap = [
   'forEach', 'map', 'reduce', 'reduceRight',
@@ -13,29 +14,36 @@ const transformFromArrayMap = [
   (target) => target._children
 )
 export default class Collection extends Model {
-  static isCollection = function (obj) {
-    return obj &&
-      (
-        obj instanceof Collection
-        || obj.__cartons_collection
-      )
-  }
+  static isCollection = isCollection;
 
   __cartons_collection = true;
-  autoSubscribeChildren = false;
+  autoSubscribeChildren = true;
+  _childListener = (event) => {
+    if (
+      ~[
+        MODEL.DID_UPDATE,
+        COLLECTION.CHILD_DID_UPDATE,
+        COLLECTION.DID_UPDATE_CHILDREN,
+      ].indexOf(event.type)
+    ) {
+      const newEvent = new Event(event);
+      newEvent.currentTarget = this;
+      respond(COLLECTION.CHILD_DID_UPDATE, this, newEvent);
+    }
+  }
 
   constructor (attributes) {
     super(attributes);
     this._Model = this.constructor.Model;
     this._children = [];
-
-    this._unsubscribes = [];
   }
 
   // before children change
-  collectionWillUpdateChildren () {}
+  [COLLECTION.WILL_UPDATE_CHILDREN] () {}
   // after children change
-  collectionDidUpdateChildren () {}
+  [COLLECTION.DID_UPDATE_CHILDREN] () {}
+  // after one child change
+  [COLLECTION.CHILD_DID_UPDATE] () {}
 
   clone () {
     const newThis = super.clone(this);
@@ -59,104 +67,79 @@ export default class Collection extends Model {
     return this._children.length;
   }
 
-  // @emitter('update')
   addChild (item) {
     this._add(item);
-    this._resetSubscribeChildren();
     return this;
   }
 
-  // @emitter('update')
   removeChild (item) {
     this._remove(item);
-    this._resetSubscribeChildren();
     return this;
   }
 
-  // @emitter('update')
   resetChildren (items) {
     this._reset(items);
-    this._resetSubscribeChildren();
     return this;
+  }
+
+  destroy () {
+    super.destroy();
+    this._unsubscribeChildren();
   }
 
   _add (item) {
-    if (item) {
-      if (Array.isArray(item)) {
-        item.forEach((item) => {
-          this._addItem(item);
-        })
-      } else {
-        this._addItem(item);
-      }
-    }
-
-    return this;
-  }
-
-  _addItem (item) {
-    const newItem = this._createModal(item);
+    const newChild = this._createModal(item);
     const prevChildren = this._children;
     const nextChildren = [
       ...prevChildren,
-      newItem
+      newChild
     ];
-    respond('collectionWillUpdateChildren', this, [prevChildren, nextChildren]);
-    this._children = nextChildren;
-    respond('collectionDidUpdateChildren', this, [prevChildren, nextChildren]);
+    this._reset(nextChildren);
+
     return this;
   }
 
   _remove (item) {
-    let currentItemIndex = this.findIndex((i) => i === item);
-    if (currentItemIndex > -1) {
+    let currentChildIndex = this.findIndex((i) => i === item);
+    if (currentChildIndex > -1) {
       const prevChildren = this._children;
       const nextChildren = [
-        ...prevChildren.slice(0, currentItemIndex),
-        ...prevChildren.slice(currentItemIndex + 1)
+        ...prevChildren.slice(0, currentChildIndex),
+        ...prevChildren.slice(currentChildIndex + 1)
       ];
-      respond('collectionWillUpdateChildren', this, [prevChildren, nextChildren]);
-      this._children = nextChildren;
-      respond('collectionDidUpdateChildren', this, [prevChildren, nextChildren]);
+      this._reset(nextChildren);
     }
 
-    return this;
-  }
-
-
-  _resetSubscribeChildren () {
-    this._unsubscribeChildren();
-    this._subscribeChildren();
     return this;
   }
 
   _subscribeChildren () {
     if (this.autoSubscribeChildren) {
       this.forEach((child) => {
-        // let unsubscribe = child.on('update', () => {
-        //   this.emit('update');
-        // })
-        this._unsubscribes.push(unsubscribe);
+        child.addListener(
+          this._childListener
+        )
       })
     }
   }
+
   _unsubscribeChildren () {
     if (this.autoSubscribeChildren) {
-      this._unsubscribes.forEach((unsubscribe) => {
-        unsubscribe();
+      this.forEach((child) => {
+        child.removeListener(
+          this._childListener
+        )
       })
-      this._unsubscribes = [];
     }
   }
 
-  _clean () {
-    this._children = [];
-    return this;
-  }
-
-  _reset (items) {
-    this._clean();
-    this._add(items);
+  _reset (nextChildren) {
+    const prevChildren = this._children;
+    respond(COLLECTION.WILL_UPDATE_CHILDREN, this, [prevChildren, nextChildren]);
+    this._unsubscribeChildren();
+    this._children = nextChildren;
+    this._subscribeChildren();
+    respond(COLLECTION.DID_UPDATE_CHILDREN, this, [prevChildren, nextChildren]);
     return this;
   }
 
@@ -170,4 +153,12 @@ export default class Collection extends Model {
 
     return current;
   }
+}
+
+export function isCollection (obj) {
+  return obj &&
+      (
+        obj instanceof Collection
+        || obj.__cartons_collection
+      )
 }

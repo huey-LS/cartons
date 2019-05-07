@@ -5,4 +5,8 @@ export function respond (name, ctx, args) {
   if (typeof spread === 'function') {
     spread.apply(ctx, args);
   }
+
+  if (typeof ctx.emit === 'function') {
+    ctx.emit(name, args);
+  }
 }

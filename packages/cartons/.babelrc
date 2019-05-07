@@ -1,32 +1,15 @@
 {
+  "presets": [
+    ["env"],
+    "stage-2"
+  ],
+  "plugins": [
+    "transform-decorators-legacy"
+  ],
   "env": {
     "commonjs": {
-      "presets": [
-        ["env"],
-        "stage-2"
-      ],
       "plugins": [
         "transform-remove-console",
-        "transform-decorators-legacy"
-      ]
-    },
-    "es": {
-      "presets": [
-        ["env", { "modules": false }],
-        "stage-2"
-      ],
-      "plugins": [
-        "transform-remove-console",
-        "transform-decorators-legacy"
-      ]
-    },
-    "dev": {
-      "presets": [
-        ["env", { "modules": false }],
-        "stage-2"
-      ],
-      "plugins": [
-        "transform-decorators-legacy"
       ]
     }
   }

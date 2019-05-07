@@ -1,12 +1,12 @@
 import Attributes from './attributes';
+import EventEmitter from './event';
+import { MODEL } from '../constants/life-cycle';
 import { respond } from '../shared/spread';
-import { clone } from '../shared/utils';
-import { alias } from './descriptors';
 import { incrementCreator } from '../shared/key-creators';
 
 const defaultKeyCreator = incrementCreator();
 
-export default class Model {
+export default class Model extends EventEmitter {
   static isModel = function (obj) {
     return obj &&
       (
@@ -18,7 +18,7 @@ export default class Model {
   __cartons_model = true;
 
   constructor (attributes = {}) {
-    // super();
+    super();
 
     let initialAttributes = this.constructor.initialAttributes;
     if (typeof initialAttributes === 'function') {
@@ -38,8 +38,8 @@ export default class Model {
     }
   }
 
-  modelWillUpdate () {}
-  modelDidUpdate () {}
+  [MODEL.WILL_UPDATE] () {}
+  [MODEL.DID_UPDATE] () {}
 
   set (
     key,
@@ -52,9 +52,7 @@ export default class Model {
     } else {
       nextAttributes = prevAttributes.merge(key);
     }
-    respond('modelWillUpdate', this, [prevAttributes, nextAttributes])
-    this._attributes = nextAttributes;
-    respond('modelDidUpdate', this, [prevAttributes, nextAttributes])
+    this.reset(nextAttributes)
     return this;
   }
 
@@ -63,19 +61,20 @@ export default class Model {
   }
 
   remove (attributeName) {
-    let prevAttributes = this._attributes;
     let nextAttributes = this._attributes.remove(attributeName);
-    respond('modelWillUpdate', this, [prevAttributes, nextAttributes])
+    this.reset(nextAttributes)
+    return this;
+  }
+
+  reset (nextAttributes) {
+    let prevAttributes = this._attributes;
+    respond(MODEL.WILL_UPDATE, this, [prevAttributes, nextAttributes])
     this._attributes = nextAttributes;
-    respond('modelDidUpdate', this, [prevAttributes, nextAttributes])
+    respond(MODEL.DID_UPDATE, this, [prevAttributes, nextAttributes])
     return this;
   }
 
   toJSON () {
     return this._attributes.toJSON();
-  }
-
-  clone () {
-    return clone(this);
   }
 }

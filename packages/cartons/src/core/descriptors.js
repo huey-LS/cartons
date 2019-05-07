@@ -19,7 +19,7 @@ export const alias = createThunkAttributeDescriptor(function (
     }
   })
 
-  return target;
+  return value;
 });
 
 export const serialized = createThunkAttributeDescriptor(function (
@@ -40,6 +40,7 @@ export const serialized = createThunkAttributeDescriptor(function (
     }
     return value;
   }
+
   delete descriptor.initializer;
 });
 
