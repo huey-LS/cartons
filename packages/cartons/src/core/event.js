@@ -114,16 +114,3 @@ export default class EventEmitter {
 }
 
 export const mixEvent = createMixer(Event);
-
-export const emitter = createThunkAttributeDescriptor(function (value, eventName) {
-  if (typeof value === 'function') {
-    return function (...args) {
-      let result = value.apply(this, args);
-      if (typeof this.emit === 'function') {
-        this.emit(eventName)
-      }
-      return result;
-    }
-  }
-  return value;
-})

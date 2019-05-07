@@ -34,16 +34,16 @@ export function formatPath (path) {
     });
 }
 
-export function concatPath (path, ...otherPath) {
-  return splitPath(path).concat(otherPath).join('.');
-}
+// export function concatPath (path, ...otherPath) {
+//   return splitPath(path).concat(otherPath).join('.');
+// }
 
-export function stringifyPath (pathArray) {
-  if (!Array.isArray(pathArray)) return '';
-  return pathArray.reduce((path, p) => (
-    `${path ? `${path}.` : ''}${p.key}${p.type === 'array' ? `[${p.index}]` : ''}`
-  ), '')
-}
+// export function stringifyPath (pathArray) {
+//   if (!Array.isArray(pathArray)) return '';
+//   return pathArray.reduce((path, p) => (
+//     `${path ? `${path}.` : ''}${p.key}${p.type === 'array' ? `[${p.index}]` : ''}`
+//   ), '')
+// }
 
 export function getDataWithPath (path, data) {
   let pathArray = formatPath(path);

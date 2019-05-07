@@ -20,6 +20,14 @@ describe('Model', function () {
     assert.strictEqual(1, model.get('count'));
   })
 
+  it ('should get initialAttributes by function success', () => {
+    class InitByFnModel extends Model {
+      static initialAttributes = () => ({count: 1});
+    }
+    let model = new InitByFnModel();
+    assert.strictEqual(1, model.get('count'));
+  })
+
   it ('should get serialized attribute success', () => {
     assert.strictEqual(1, model.count);
   })
@@ -27,6 +35,45 @@ describe('Model', function () {
   it ('should set attribute success', () => {
     model.set('count', 2);
     assert.strictEqual(2, model.count);
+  })
+
+  it ('should set attribute obj success', () => {
+    model.set({ count: 3 });
+    assert.strictEqual(3, model.count);
+  })
+
+  it ('should remove attribute success', () => {
+    model.remove('count');
+    assert.strictEqual(undefined, model.count);
+  })
+
+  it ('should set attribute with obj path success', () => {
+    model.set('a.b', 1);
+    assert.strictEqual(1, model.get('a.b'));
+  })
+
+  it ('should set attribute with array path success', () => {
+    model.set(['a', 'b'], 1);
+    assert.strictEqual(1, model.get('a.b'));
+  })
+
+  it ('should auto get key from attribute success', () => {
+    class TestKeyModel extends Model {
+      static key = 'id';
+    }
+    const testKeyModel = new TestKeyModel();
+    testKeyModel.set('id', 1);
+    assert.strictEqual(1, testKeyModel.get('id'));
+    assert.strictEqual(1, testKeyModel.key);
+  })
+
+  it ('should set one array attribute success', () => {
+    model.set('testArray[0]', 0);
+    model.set('testArray.1', 1);
+    assert.strictEqual(true, Array.isArray(model.get('testArray')));
+    assert.strictEqual(0, model.get('testArray[0]'));
+    assert.strictEqual(1, model.get('testArray.1'));
+    assert.strictEqual('[0,1]', JSON.stringify(model.get('testArray')));
   })
 
   it ('should life-cycle call success', (done) => {

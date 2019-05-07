@@ -47,7 +47,7 @@ export default class Model extends EventEmitter {
   ) {
     let prevAttributes = this._attributes;
     let nextAttributes;
-    if (typeof key === 'string') {
+    if (typeof newValue !== 'undefined') {
       nextAttributes = prevAttributes.set(key, newValue)
     } else {
       nextAttributes = prevAttributes.merge(key);
