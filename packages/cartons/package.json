@@ -37,9 +37,5 @@
     "cross-env": "^5.1.4",
     "mocha": "^6.1.4",
     "nyc": "^14.0.0"
-  },
-  "dependencies": {
-    "tslib": "^1.10.0",
-    "typescript": "^3.5.2"
   }
 }

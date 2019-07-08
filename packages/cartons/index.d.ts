@@ -1,7 +1,7 @@
 
-import Model from './types/model';
-import Collection from './types/collection';
-import * as helpers from './types/helpers';
+import Model from './model';
+import Collection from './collection';
+import * as helpers from './helpers';
 
 export {
   Model,

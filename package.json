@@ -13,6 +13,8 @@
   "devDependencies": {
     "lerna": "^2.9.0",
     "mocha": "^6.1.4",
-    "nyc": "^14.0.0"
+    "nyc": "^14.0.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.2"
   }
 }
