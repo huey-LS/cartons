@@ -4,11 +4,17 @@ import {
 } from '../shared/utils';
 
 export const alias = createThunkAttributeDescriptor(function (
-  target, value, aliasName, key, descriptor
+  target,
+  value,
+  aliasName,
+  key,
+  descriptor
 ) {
   let aliasNames;
   if (!Array.isArray(aliasName)) {
     aliasNames = [aliasName];
+  } else {
+    aliasNames = aliasName;
   }
 
   aliasNames.forEach((aliasName) => {
@@ -23,7 +29,11 @@ export const alias = createThunkAttributeDescriptor(function (
 });
 
 export const serialized = createThunkAttributeDescriptor(function (
-  target, value, options, key, descriptor
+  target,
+  value,
+  options,
+  key,
+  descriptor
 ) {
   let name, type;
   if (typeof options === 'string') {
@@ -33,23 +43,29 @@ export const serialized = createThunkAttributeDescriptor(function (
     type = options.type;
   }
 
-  descriptor.get = function () {
-    let value = this.get(name);
-    if (type) {
-      value = type(value);
+  if (descriptor) {
+    descriptor.get = function () {
+      let value = this.get(name);
+      if (type) {
+        value = type(value);
+      }
+      return value;
     }
-    return value;
-  }
 
-  delete descriptor.initializer;
+    delete descriptor.writable;
+
+    delete descriptor.initializer;
+  }
 });
 
 export const connectModel = createThunkAttributeDescriptor(function (
-  target, model, options = {}
+  target,
+  model,
+  options = {}
 ) {
   const { autoEmitUpdate = true } = options;
   if (isModel(model)) {
-    model.on('update', () => {
+    model.addListener('update', () => {
       if (typeof options.modelDidUpdate === 'function') {
         options.modelDidUpdate.call(target);
       }
@@ -63,7 +79,10 @@ export const connectModel = createThunkAttributeDescriptor(function (
 });
 
 export const bindActions = createThunkAttributeDescriptor(function (
-  target, actions, options = {}, actionsAttributeName
+  target,
+  actions,
+  options = {},
+  actionsAttributeName
 ) {
   actionsAttributeName = actionsAttributeName || options.actionsAttributeName || 'actions';
   let newActions = Object.keys(actions)

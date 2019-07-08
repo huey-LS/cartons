@@ -68,17 +68,25 @@ export default class Collection extends Model {
   }
 
   addChild (item) {
-    this._add(item);
+    this._add(
+      this._createModal(item)
+    );
     return this;
   }
 
   removeChild (item) {
-    this._remove(item);
+    this._remove(
+      this._createModal(item)
+    );
     return this;
   }
 
   resetChildren (items) {
-    this._reset(items);
+    this._reset(
+      items.map((item) => (
+        this._createModal(item)
+      ))
+    );
     return this;
   }
 

@@ -1,3 +1,3 @@
-exports.Model = require('./model');
-exports.Collection = require('./collection');
+exports.Model = require('./model').default;
+exports.Collection = require('./collection').default;
 exports.helpers = require('./helpers');

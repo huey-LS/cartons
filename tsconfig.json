@@ -1,12 +1,23 @@
 {
   "compilerOptions": {
-      "moduleResolution":"node",
-      "jsx": "react",
-      "module": "es6",
-      "target": "es5",
-      "allowJs": true,
-      "strictNullChecks": true,
-      "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true,
-  }
+    "target": "ES5",
+    "module": "commonjs",
+    "strict": true,
+    "allowJs": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "lib": [
+      "esnext",
+      "dom",
+      "scripthost"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

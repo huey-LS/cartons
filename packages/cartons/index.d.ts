@@ -1,17 +1,11 @@
 
-import Model from './model';
-import Collection from './collection';
+import Model from './types/model';
+import Collection from './types/collection';
+import * as helpers from './types/helpers';
 
 export {
   Model,
-  Collection
+  Collection,
+  helpers
 }
 
-export declare class Event {
-  static isEvent (): boolean;
-  private readonly __cartons_event: boolean;
-  private _events: Object;
-  emit (name: string, data: any): void;
-  on (name: string, callback: () => void): () => void;
-  off (name: string, callback: () => void): void;
-}

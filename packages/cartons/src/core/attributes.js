@@ -18,6 +18,7 @@ export default class Attributes {
   }
 
   __cartons_attributes = true;
+  _attributes;
 
   constructor (data = {}) {
     this._attributes = data;
@@ -75,7 +76,8 @@ export default class Attributes {
     let next = newProperties;
 
     for (let i = 0, len = pathArray.length; i < len; i++) {
-      let { key, index, type } = pathArray[i];
+      const path = pathArray[i];
+      let { key, type } = path;
       let arrayIndex = i;
       if (type === 'array') {
         // next to next
@@ -85,7 +87,7 @@ export default class Attributes {
           next[key] = [ ...next[key] ];
         }
         next = next[key];
-        key = index;
+        key = path.index;
       }
 
       if (arrayIndex === pathArray.length - 1) {

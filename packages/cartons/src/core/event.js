@@ -2,11 +2,17 @@ import { alias } from './descriptors';
 import { createMixer, createThunkAttributeDescriptor, clone } from '../shared/utils';
 
 export class Event {
-  constructor (options) {
-    const { data, target, currentTarget, type } = options;
+  data;
+  target;
+  type;
+
+
+  constructor (
+    options
+  ) {
+    const { data, target, type } = options;
     this.data = data;
     this.target = target;
-    this.currentTarget = currentTarget || target;
     this.type = type;
 
     return this;
@@ -26,6 +32,7 @@ export default class EventEmitter {
 
   _events = {};
   _all_events = [];
+  _destroyed = false;
 
   emit (name, data) {
     let events = this._events[name];
@@ -54,7 +61,7 @@ export default class EventEmitter {
     if (this._destroyed) return false;
     if (!callback && typeof name === 'function') {
       callback = name;
-      name = null;
+      // name = null;
       this._all_events.push(callback);
     } else {
       let events = this._events[name];
@@ -96,8 +103,8 @@ export default class EventEmitter {
   }
 
   destroy () {
-    this._events = null;
-    this._all_events = null;
+    this._events = {};
+    this._all_events = [];
     this._destroyed = true;
   }
 

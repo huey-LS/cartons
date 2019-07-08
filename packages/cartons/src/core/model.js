@@ -15,17 +15,22 @@ export default class Model extends EventEmitter {
       )
   }
 
+  static initialAttributes;
+  static key;
+
   __cartons_model = true;
 
   constructor (attributes = {}) {
     super();
 
-    let initialAttributes = this.constructor.initialAttributes;
+    const constructor = this.constructor;
+
+    let initialAttributes = constructor.initialAttributes;
     if (typeof initialAttributes === 'function') {
       initialAttributes = initialAttributes();
     }
     this._attributes = new Attributes(Object.assign({}, initialAttributes, attributes));
-    var keyCreator = this.constructor.key || defaultKeyCreator;
+    var keyCreator = constructor.key || defaultKeyCreator;
     if (typeof keyCreator === 'function') {
       this.key = keyCreator();
     } else if (typeof keyCreator === 'string') {

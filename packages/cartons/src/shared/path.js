@@ -20,7 +20,9 @@ export function checkPathIsArray (path) {
   }
 }
 
-export function formatPath (path) {
+export function formatPath (
+  path
+) {
   return splitPath(path)
     .map((path) => {
       let arrayPath;
@@ -28,22 +30,12 @@ export function formatPath (path) {
         return arrayPath;
       } else {
         return {
+          type: 'object',
           key: path
         }
       }
     });
 }
-
-// export function concatPath (path, ...otherPath) {
-//   return splitPath(path).concat(otherPath).join('.');
-// }
-
-// export function stringifyPath (pathArray) {
-//   if (!Array.isArray(pathArray)) return '';
-//   return pathArray.reduce((path, p) => (
-//     `${path ? `${path}.` : ''}${p.key}${p.type === 'array' ? `[${p.index}]` : ''}`
-//   ), '')
-// }
 
 export function getDataWithPath (path, data) {
   let pathArray = formatPath(path);
@@ -54,7 +46,8 @@ export function getDataWithPath (path, data) {
       || null === next
     ) return next;
     if (path.type === 'array') {
-      return (next[path.key] || [])[path.index];
+      let index = path.index;
+      return (next[path.key] || [])[index];
     } else {
       return next[path.key];
     }

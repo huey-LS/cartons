@@ -31,6 +31,8 @@
   },
   "dependencies": {
     "cartons": "^0.2.0",
-    "cartons-react": "^0.2.0"
+    "cartons-react": "^0.2.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.5.2"
   }
 }

@@ -26,7 +26,9 @@ export const mixinFunctionFromTransform = (
   return target;
 }
 
-export function createThunkAttributeDescriptor (callback) {
+export function createThunkAttributeDescriptor (
+  callback
+) {
   return function (options) {
     return function (target, key, descriptor) {
       if (key) {
@@ -49,12 +51,12 @@ export function createThunkAttributeDescriptor (callback) {
 
     function mixinDescriptor (target, key, descriptor) {
       if (!descriptor) {
-        descriptor = createInitializerDescriptor(target, key);
+        descriptor = createInitializerDescriptor(key);
       }
 
-      if (descriptor.initializer) {
-        const oldInitializer = descriptor.initializer;
-        descriptor.initializer = function () {
+      if ((descriptor).initializer) {
+        const oldInitializer = (descriptor).initializer;
+        (descriptor).initializer = function () {
           const _self = this;
           const value = oldInitializer.call(_self);
           return callback.call(
@@ -85,44 +87,42 @@ export function createThunkAttributeDescriptor (callback) {
   }
 }
 
-export function createInitializerDescriptor (target, key, descriptor) {
-  if (!descriptor) {
-    const initializerKey = `__initializer_${key}`;
-    descriptor = {
-      enumerable: true,
-      get: function () {
-        let initializer = this[initializerKey];
-        return initializer && initializer.value;
-      },
-      set: function (value) {
-        if (!this[initializerKey]) this[initializerKey] = {};
-        let initializer = this[initializerKey];
-        if (initializer.initialized) {
-          initializer.value = value;
-        } else {
-          initializer.originValue = value;
-          initializer.value = descriptor.initializer.call(this);
-          initializer.initialized = true;
-          this[initializerKey] = initializer;
-        }
-      },
-      initializer: function () {
-        let initializer = this[initializerKey];
-        return initializer && initializer.originValue;
+export function createInitializerDescriptor (
+  key
+) {
+  const initializerKey = `__initializer_${key}`;
+  const descriptor = {
+    enumerable: true,
+    get: function () {
+      let initializer = this[initializerKey];
+      return initializer && initializer.value;
+    },
+    set: function (value) {
+      const _this = this;
+      if (!_this[initializerKey]) _this[initializerKey] = {};
+      let initializer = _this[initializerKey];
+      if (initializer.initialized) {
+        initializer.value = value;
+      } else {
+        initializer.originValue = value;
+        initializer.value = descriptor.initializer();
+        initializer.initialized = true;
+        _this[initializerKey] = initializer;
       }
-    };
-  }
+    },
+    initializer () {
+      const _this = this;
+      let initializer = _this[initializerKey];
+      return initializer && initializer.originValue;
+    }
+  };
 
   return descriptor;
 }
 
 export function createMixer (TargetClass) {
   return (SuperClass) => {
-    const MixinClass = class extends SuperClass {
-      constructor (...args) {
-        super(...args);
-      }
-    }
+    const MixinClass = class extends SuperClass {}
 
     MixinClass.prototype = Object.create(
       MixinClass.prototype,
