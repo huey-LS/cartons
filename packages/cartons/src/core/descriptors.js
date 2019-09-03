@@ -35,12 +35,13 @@ export const serialized = createThunkAttributeDescriptor(function (
   key,
   descriptor
 ) {
-  let name, type;
+  let name, type, defaultValue;
   if (typeof options === 'string') {
     name = options;
   } else {
     name = options.name;
     type = options.type;
+    defaultValue = options.default;
   }
 
   if (descriptor) {
@@ -49,6 +50,8 @@ export const serialized = createThunkAttributeDescriptor(function (
       let value = this.get(name);
       if (type) {
         value = type(value);
+      } else if (typeof value === 'undefined'){
+        value = defaultValue;
       }
       return value;
     }
