@@ -35,6 +35,7 @@ export default class Collection extends Model {
   constructor (attributes) {
     super(attributes);
     this._Model = this.constructor.Model;
+    this._isChildModel = this.constructor.isChildModel || ((model) => (model instanceof this._Model));
     this._children = [];
   }
 
@@ -52,7 +53,7 @@ export default class Collection extends Model {
   }
 
   toJSON () {
-    return {...this._attributes, children: this._children.map(item => item.toJSON())};
+    return {...super.toJSON(), children: this._children.map(item => item.toJSON())};
   }
 
   toArray () {
@@ -67,22 +68,26 @@ export default class Collection extends Model {
     return this._children.length;
   }
 
+  getChildren() {
+    return this._children.slice(0);
+  }
+
   addChild (item) {
-    this._add(
+    this._addChild(
       this._createModal(item)
     );
     return this;
   }
 
   removeChild (item) {
-    this._remove(
-      this._createModal(item)
+    item && this._removeChildByKey(
+      item.key
     );
     return this;
   }
 
   resetChildren (items) {
-    this._reset(
+    this._resetChild(
       items.map((item) => (
         this._createModal(item)
       ))
@@ -95,27 +100,27 @@ export default class Collection extends Model {
     this._unsubscribeChildren();
   }
 
-  _add (item) {
-    const newChild = this._createModal(item);
+  _addChild (newChild) {
+    // const newChild = this._createModal(item);
     const prevChildren = this._children;
     const nextChildren = [
       ...prevChildren,
       newChild
     ];
-    this._reset(nextChildren);
+    this._resetChild(nextChildren);
 
     return this;
   }
 
-  _remove (item) {
-    let currentChildIndex = this.findIndex((i) => i === item);
+  _removeChildByKey (key) {
+    let currentChildIndex = this.findIndex((i) => i.key === key);
     if (currentChildIndex > -1) {
       const prevChildren = this._children;
       const nextChildren = [
         ...prevChildren.slice(0, currentChildIndex),
         ...prevChildren.slice(currentChildIndex + 1)
       ];
-      this._reset(nextChildren);
+      this._resetChild(nextChildren);
     }
 
     return this;
@@ -141,7 +146,7 @@ export default class Collection extends Model {
     }
   }
 
-  _reset (nextChildren) {
+  _resetChild (nextChildren) {
     const prevChildren = this._children;
     respond(COLLECTION.WILL_UPDATE_CHILDREN, this, [prevChildren, nextChildren]);
     this._unsubscribeChildren();
@@ -153,7 +158,7 @@ export default class Collection extends Model {
 
   _createModal (item) {
     let current;
-    if (item instanceof this._Model) {
+    if (this._isChildModel(item)) {
       current = item;
     } else {
       current = new this._Model(item);

@@ -25,7 +25,7 @@ export default class Attributes {
   }
 
   toJSON () {
-    return this._attributes;
+    return { ...this._attributes };
   }
 
   get (path) {
@@ -37,6 +37,7 @@ export default class Attributes {
     if (parentArray) {
       let [ newProperties, parent, key ] = parentArray;
       parent[key] = data;
+      console.log(parent, key, newProperties);
       return new Attributes(newProperties);
     } else {
       console.log(`${path} error`);

@@ -1,23 +1,4 @@
-interface RemoveListener {
-  (name: string, callback: () => void): void;
-  (callback: () => void): void;
-}
-
-interface AddListener {
-  (name: string, callback: () => void): void;
-  (callback: () => void): void;
-}
-
-declare class EventEmitter {
-  static isEvent (): boolean;
-  private readonly __cartons_event: boolean;
-  private _events: Object;
-  emit (name: string, data?: any): void;
-  on: AddListener;
-  addListener: AddListener;
-  off: RemoveListener;
-  removeListener: RemoveListener;
-}
+import EventEmitter from './event-emitter';
 
 declare class Attributes {
   set (key: string, newValue: any): this|Attributes;
@@ -30,8 +11,9 @@ declare class Attributes {
 export default class Model extends EventEmitter {
   static isModel (obj: any): boolean;
   static key?: string | Function;
+  static initialAttributes?: Object | Function;
   constructor (attributes?: Object);
-  private readonly __cartons_model: boolean;
+  readonly __cartons_model: boolean;
   private readonly _attributes: Attributes;
   modelWillUpdate (prevAttributes: Attributes, nextAttributes: Attributes): any;
   modelDidUpdate (prevAttributes: Attributes, nextAttributes: Attributes): any;
@@ -40,6 +22,6 @@ export default class Model extends EventEmitter {
   set (key: string, newValue: any): this;
   get (attributeName: string): any;
   remove (attributeName: string): this;
-  toJSON (): JSON;
+  toJSON (): Object;
   clone (): Model
 }

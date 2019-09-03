@@ -44,6 +44,7 @@ export const serialized = createThunkAttributeDescriptor(function (
   }
 
   if (descriptor) {
+    descriptor.enumerable = true;
     descriptor.get = function () {
       let value = this.get(name);
       if (type) {

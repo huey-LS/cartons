@@ -1,30 +1,32 @@
 
 import Model from './model';
 
-export default class Collection extends Model {
+export default class Collection<T = Model> extends Model {
   static isCollection (any: any): boolean;
-  static Model: (typeof Model) | (() => Model);
-  private readonly __cartons_collection: boolean;
+  static Model: (typeof Model) | ((attributes: Object) => Model);
+  static isChildModel: (model: any) => boolean
+  readonly __cartons_collection: boolean;
   autoSubscribeChildren?: boolean;
-  collectionWillUpdateChildren (prevChildren: Array<Model>, nextChildren: Array<Model>): any;
-  collectionDidUpdateChildren (prevChildren: Array<Model>, nextChildren: Array<Model>): any;
-  readonly children: Array<Model>;
+  collectionWillUpdateChildren (prevChildren: Array<T>, nextChildren: Array<T>): any;
+  collectionDidUpdateChildren (prevChildren: Array<T>, nextChildren: Array<T>): any;
+  readonly children: Array<T>;
   readonly length: number;
-  addChild (child: Model|Object): this;
-  removeChild (child: Model|Object): this;
-  resetChildren (newChildren: Array<Model|Object>): this;
+  addChild (child: T|Object): this;
+  removeChild (child: T|Object): this;
+  resetChildren (newChildren: Array<T|Object>): this;
   toJSON (): JSON;
   toArray(): Array<JSON>;
 
-  forEach: Array<Model>["forEach"];
-  map: Array<Model>["map"];
-  reduce: Array<Model>["reduce"];
-  reduceRight: Array<Model>["reduceRight"];
-  slice: Array<Model>["slice"];
-  find: Array<Model>["find"];
-  findIndex: Array<Model>["findIndex"];
-  some: Array<Model>["some"];
-  every: Array<Model>["every"];
-  includes: Array<Model>["includes"];
-  indexOf: Array<Model>["indexOf"];
+  forEach: Array<T>["forEach"];
+  map: Array<T>["map"];
+  filter: Array<T>["filter"];
+  reduce: Array<T>["reduce"];
+  reduceRight: Array<T>["reduceRight"];
+  slice: Array<T>["slice"];
+  find: Array<T>["find"];
+  findIndex: Array<T>["findIndex"];
+  some: Array<T>["some"];
+  every: Array<T>["every"];
+  includes: Array<T>["includes"];
+  indexOf: Array<T>["indexOf"];
 }

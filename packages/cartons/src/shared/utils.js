@@ -51,7 +51,8 @@ export function createThunkAttributeDescriptor (
 
     function mixinDescriptor (target, key, descriptor) {
       if (!descriptor) {
-        descriptor = createInitializerDescriptor(key);
+        // descriptor = createInitializerDescriptor(key);
+        descriptor = {};
       }
 
       if ((descriptor).initializer) {
