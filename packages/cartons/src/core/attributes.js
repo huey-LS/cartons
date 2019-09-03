@@ -37,10 +37,8 @@ export default class Attributes {
     if (parentArray) {
       let [ newProperties, parent, key ] = parentArray;
       parent[key] = data;
-      console.log(parent, key, newProperties);
       return new Attributes(newProperties);
     } else {
-      console.log(`${path} error`);
       return this;
     }
   }
@@ -61,7 +59,6 @@ export default class Attributes {
       }
       return new Attributes(newProperties);
     } else {
-      console.log(`${path} error`);
       return this;
     }
   }

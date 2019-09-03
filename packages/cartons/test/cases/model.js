@@ -11,6 +11,9 @@ class TestModel extends Model {
 
   @serialized('count')
   count;
+
+  @serialized({ name: 'test', default: 'default value' })
+  testDefault;
 }
 
 
@@ -30,6 +33,10 @@ describe('Model', function () {
 
   it ('should get serialized attribute success', () => {
     assert.strictEqual(1, model.count);
+  })
+
+  it ('should get default serialized attribute success', () => {
+    assert.strictEqual('default value', model.testDefault);
   })
 
   it ('should set attribute success', () => {
