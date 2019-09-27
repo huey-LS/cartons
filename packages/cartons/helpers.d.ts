@@ -10,6 +10,17 @@ declare namespace descriptors {
   export const serialized: thunkAttributeDescriptor;
 }
 
+declare namespace keyCreators {
+  export interface incrementCreator {
+    (prefix: string): () => string
+  }
+
+  export interface randomCreator {
+    (length?: number, radix?: number): () => string
+  }
+}
+
 export {
-  descriptors
+  descriptors,
+  keyCreators
 }
