@@ -2,15 +2,19 @@ interface descriptor {
   (target: Object, key: string, descriptor?: PropertyDescriptor): void;
 }
 
-interface thunkAttributeDescriptor {
-  (options?: any): descriptor
+
+declare namespace CartonsDescriptorsHelpers {
+  export interface serialized {
+    (options?: any): descriptor
+  }
 }
 
-declare namespace descriptors {
-  export const serialized: thunkAttributeDescriptor;
+export const descriptors: {
+  serialized: CartonsDescriptorsHelpers.serialized
 }
 
-declare namespace keyCreators {
+
+declare namespace CartonsKeyCreatorsHelpers {
   export interface incrementCreator {
     (prefix: string): () => string
   }
@@ -20,7 +24,7 @@ declare namespace keyCreators {
   }
 }
 
-export {
-  descriptors,
-  keyCreators
-}
+export const keyCreators: {
+  incrementCreator: CartonsKeyCreatorsHelpers.incrementCreator,
+  randomCreator: CartonsKeyCreatorsHelpers.randomCreator
+};
