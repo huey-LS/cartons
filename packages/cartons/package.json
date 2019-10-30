@@ -1,43 +1,24 @@
 {
-  "name": "cartons",
-  "version": "1.0.0-beta.4",
+  "name": "@cartons/core",
+  "version": "2.0.0-alpha",
   "description": "",
-  "main": "index.js",
-  "files": [
-    "lib",
-    "index.js",
-    "index.d.ts",
-    "event-emitter.js",
-    "event-emitter.d.ts",
-    "collection.js",
-    "collection.d.ts",
-    "model.js",
-    "model.d.ts",
-    "helpers.js",
-    "helpers.d.ts"
-  ],
+  "main": "lib/index.js",
+  "files": [],
   "scripts": {
     "clean": "rm -fr lib",
-    "build:commonjs": "cross-env BABEL_ENV=commonjs babel src --out-dir lib",
-    "build": "npm run clean && npm run build:commonjs",
-    "build:dev": "npm run clean && cross-env BABEL_ENV=dev babel src --out-dir lib",
-    "test": "npm run build:dev && cross-env BABEL_ENV=dev mocha",
+    "build": "npm run clean && tsc",
+    "dev": "npm run clean && tsc -w",
+    "test": "mocha --require ts-node/register --noEmit -p test-tsconfig.js --watch-extensions ts",
     "nyc": "nyc npm run test",
     "prepare": "npm run build"
   },
-  "author": "",
+  "author": "huey.LS",
   "license": "MIT",
   "devDependencies": {
-    "babel": "^6.23.0",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-remove-console": "^6.9.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "cross-env": "^5.1.4",
-    "mocha": "^6.1.4",
-    "nyc": "^14.0.0"
+    "@types/mocha": "^5.2.7",
+    "typescript": "^3.6.4",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "ts-node": "^8.4.1"
   }
 }

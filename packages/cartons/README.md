@@ -22,11 +22,11 @@ npm install --save cartons
 
 #### Usage
 ```js
-import Model from 'cartons/model';
+import { Model } from '@cartons/core';
 
 class CustomModel extends Model {
   static key; // key生成函数 默认使用 key-creators.incrementCreator
-  static initialAttributes = { test: 1 }; // 每次实例初始化的属性
+  static initialAttributes = () => ({ test: 1 }); // 每次实例初始化的属性
 
   // attributes set 前的 hook
   modelWillUpdate () {}
@@ -37,7 +37,7 @@ class CustomModel extends Model {
 ```
 
 ##### Static Attributes
-- [initialAttributes] {Object|Function} - 建议`Function`
+- [initialAttributes] {Function} - 建议`Function`
   设置为`Function`时，将会把返回值作为初始化的属性
 - key - key生成函数 默认使用
 
@@ -63,7 +63,7 @@ m.get('test') // 3
 ### Collection
 对`Model`集合的一层包装, 同时会自动监听所有子`Model`的`update`事件
 ```js
-import Collection from 'cartons/collection';
+import { Collection } from '@cartons/core';
 class CustomCollection extends Collection {
   static Model = CustomModel;
   static key;
@@ -115,8 +115,7 @@ var collection = new CustomCollection(
 
 ### usage
 ```js
-import Model from 'cartons/model';
-import { connect } from 'cartons/descriptors';
+import { Model, connect } from '@cartons/core';
 
 import ModelA from './model-a';
 

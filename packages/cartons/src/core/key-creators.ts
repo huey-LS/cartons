@@ -10,3 +10,7 @@ export function incrementCreator (prefix = '') {
     return prefix + (++incrementNumber);
   }
 }
+
+export interface KeyCreator<T = any> {
+  (): T
+}

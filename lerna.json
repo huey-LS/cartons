@@ -1,8 +1,9 @@
 {
-  "lerna": "2.9.0",
+  "lerna": "3.18.2",
   "version": "independent",
+  "npmClient": "npm",
   "packages": [
-    "packages/*"
+    "packages/cartons"
   ],
   "npmClientArgs": [
     "--registry=https://registry.npm.taobao.org",

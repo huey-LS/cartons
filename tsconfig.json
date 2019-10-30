@@ -1,23 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES5",
+    "target": "es2017",
     "module": "commonjs",
+    "declaration": true,
     "strict": true,
-    "allowJs": true,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "lib": [
-      "esnext",
-      "dom",
-      "scripthost"
+      "ESNext"
     ]
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "lib"
   ]
 }
