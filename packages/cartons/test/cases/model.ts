@@ -136,13 +136,4 @@ describe('Model', function () {
     })
     testModel.set('count', 2);
   })
-
-  // it ('should model clone success', () => {
-  //   let model = new InitialAttributesModel();
-  //   let cloneModel = model.clone();
-  //   assert.notStrictEqual(model, cloneModel);
-  //   assert.strictEqual(model.count, cloneModel.count);
-  //   cloneModel.set('count', 2);
-  //   assert.notStrictEqual(model.count, cloneModel.count);
-  // })
 })

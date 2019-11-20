@@ -38,20 +38,4 @@ describe('Collection', function () {
     testCollection.removeChild(testModel.key);
     assert.strictEqual(0, testCollection.length);
   })
-
-  // it ('should subscribe child update success', (done) => {
-  //   const testCollection = new TestCollection();
-  //   testCollection.addListener('collectionChildDidUpdate', (event) => {
-  //     try {
-  //       assert.strictEqual(testCollection, event.currentTarget);
-  //       assert.strictEqual(testModel, event.target);
-  //       done();
-  //     } catch (e) {
-  //       done(e);
-  //     }
-  //   })
-  //   testCollection.addChild({ text: 'abc' });
-  //   let testModel = testCollection.children[0];
-  //   testModel.set('text', 'def');
-  // })
 })
